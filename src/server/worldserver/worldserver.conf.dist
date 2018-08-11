@@ -3995,3 +3995,110 @@ Metric.OverallStatusInterval = 1
 
 #
 ###################################################################################################
+
+###################################################################################################
+#
+# VAS AUTOBALANCE OPTIONS
+#
+#     VAS.AutoBalance.XPlayer
+#        Set Server to level of solo mode.
+#        Set to 0 to Disable VAS-SOLO Mod.
+#        Example: VAS.AutoBalance.XPlayer = 1 will set everything for a 1 player game.
+#        Default:     1
+
+Solocraft.Enable = 1
+VAS.AutoBalance.XPlayer = 1
+
+#
+#     VASAutoBalance.Instances
+#        Set instances to Auto chance XPlayer depending on players in it.
+#        Default:     1 (1 = ON, 0 = OFF)
+
+VASAutoBalance.Instances = 1
+VASAutoBalance.DungeonsOnly = 1
+
+#
+#     VASAutoBalance.DebugLevel
+#        0 = None
+#        1 = Errors Only
+#        2 = Errors and Basic Information
+#        3 = All VAS Info
+#        Default:     1
+
+VASAutoBalance.DebugLevel = 2
+
+#
+#     VASAutoBalance.PlayerChangeNotify
+#        Set Auto Notifications to all players in Instance that player count has changed.
+#        Default:     1 (1 = ON, 0 = OFF)
+
+VASAutoBalance.PlayerChangeNotify = 1
+
+#
+#     VAS.AutoBalance.Color
+#        In Game Color for mod information in chat window.
+#        Default:     cffFF8000 (Orange)
+
+VAS.AutoBalance.Color = cffFF8000
+
+#
+#     VASAutoBalance.MinHPModifier
+#        Minimum Modifier setting for Health Modification
+#        Default:     0.20
+
+VASAutoBalance.MinHPModifier = 0.100000
+
+#
+#     VASAutoBalance.MinDamageModifier
+#        Minimum Modifier setting for Damage Modification
+#        Default:     0.10
+
+VASAutoBalance.MinDamageModifier = 0.100000
+
+#
+#     VASAutoBalance.ForcedIdXX
+#        Sets MobIDs for the group they belong to.
+#        All 5 Man Mobs should go in VASAutoBalance.ForcedID5
+#        All 10 Man Mobs should go in VASAutoBalance.ForcedID10 etc.
+
+VASAutoBalance.ForcedID40 = ""
+VASAutoBalance.ForcedID25 = ""
+VASAutoBalance.ForcedID20 = ""
+VASAutoBalance.ForcedID10 = "15689,15550,16152,17521,17225,16028,29324,31099"
+VASAutoBalance.ForcedID5 = "15203,15204,15205,15305,6109,26801,30508,26799,30495,26803,30497,27859,27249"
+VASAutoBalance.ForcedID2 = "25549,24558,25574,24559,25556,25557,25578,24561,25555,24555,25541,24553,25550,24554,24552,25564,15931,29373"
+
+#
+###################################################################################################
+
+###################################################################################################
+# lasyan3 #
+###########
+#
+#    Custom.GainHonorOnGuardKill
+#        Description: Set it to 1 to gain honor when you kill a guard.
+#                     Note that not all city guards will give you honor. It seems only capital and big city guards are flagged
+#                     as so in the database.
+#        Default : 0 (No honor when you kill a guard)
+#
+
+Custom.GainHonorOnGuardKill = 1
+
+#
+# Custom.GainHonorOnEliteKill
+# Set it to 1 to gain honor when you kill an elite mob (this does not apply on rare mob, unless he is also elite).
+# Default : 0 (No honor when you kill an elite mob)
+#
+
+Custom.GainHonorOnEliteKill = 1
+
+#
+#     Custom.FastFishing
+#         Set it to 1 to make fishing a lot faster!
+#     Default : 0 (Fishing is normal)
+#
+
+Custom.FastFishing = 1
+
+#
+###################################################################################################
