@@ -20,7 +20,8 @@
 #define SC_SCRIPTMGR_H
 
 #include "Common.h"
-#include "ObjectGuid.h"
+#include "ObjectGuid.h" 
+#include "Unit.h"
 #include <vector>
 
 class AccountMgr;
@@ -271,6 +272,9 @@ class TC_GAME_API WorldScript : public ScriptObject
 
         // Called when the world is actually shut down.
         virtual void OnShutdown() { }
+
+        // Called at End of SetInitialWorldSettings.
+        virtual void SetInitialWorldSettings() { }
 };
 
 class TC_GAME_API FormulaScript : public ScriptObject
@@ -301,6 +305,17 @@ class TC_GAME_API FormulaScript : public ScriptObject
 
         // Called when calculating the experience rate for group experience.
         virtual void OnGroupRateCalculation(float& /*rate*/, uint32 /*count*/, bool /*isRaid*/) { }
+};
+
+class AllMapScript : public ScriptObject
+{
+protected:
+    AllMapScript(const char* name);
+public:
+    // Called when a player enters any Map
+    virtual void OnPlayerEnterAll(Map* /*map*/, Player* /*player*/) { }
+    // Called when a player leave any Map
+    virtual void OnPlayerLeaveAll(Map* /*map*/, Player* /*player*/) { }
 };
 
 template<class TMap> class MapScript : public UpdatableScript<TMap>
@@ -407,9 +422,12 @@ class TC_GAME_API UnitScript : public ScriptObject
 
         // Called when Spell Damage is being Dealt
         virtual void ModifySpellDamageTaken(Unit* /*target*/, Unit* /*attacker*/, int32& /*damage*/) { }
+
+        //VAS AutoBalance
+        virtual uint32 DealDamage(Unit* AttackerUnit, Unit *pVictim, uint32 damage, DamageEffectType damagetype) { return damage; }
 };
 
-class TC_GAME_API CreatureScript : public UnitScript
+class TC_GAME_API CreatureScript : public UnitScript, public UpdatableScript<Creature>
 {
     protected:
 
@@ -419,6 +437,17 @@ class TC_GAME_API CreatureScript : public UnitScript
 
         // Called when a CreatureAI object is needed for the creature.
         virtual CreatureAI* GetAI(Creature* /*creature*/) const = 0;
+};
+
+class AllCreatureScript : public ScriptObject
+{
+protected:
+    AllCreatureScript(const char* name);
+public:
+    // Called from End of Creature Update.
+    virtual void OnAllCreatureUpdate(Creature* /*creature*/, uint32 /*diff*/) { }
+    // Called from End of Creature SelectLevel.
+    virtual void Creature_SelectLevel(const CreatureTemplate* /*cinfo*/, Creature* /*creature*/) { }
 };
 
 class TC_GAME_API GameObjectScript : public ScriptObject
@@ -882,6 +911,7 @@ class TC_GAME_API ScriptMgr
         void OnWorldUpdate(uint32 diff);
         void OnStartup();
         void OnShutdown();
+        void SetInitialWorldSettings();
 
     public: /* FormulaScript */
 
@@ -892,6 +922,11 @@ class TC_GAME_API ScriptMgr
         void OnBaseGainCalculation(uint32& gain, uint8 playerLevel, uint8 mobLevel, ContentLevels content);
         void OnGainCalculation(uint32& gain, Player* player, Unit* unit);
         void OnGroupRateCalculation(float& rate, uint32 count, bool isRaid);
+
+    public: /* AllScript */
+
+        void OnPlayerEnterMapAll(Map* map, Player* player);
+        void OnPlayerLeaveMapAll(Map* map, Player* player);
 
     public: /* MapScript */
 
@@ -915,9 +950,14 @@ class TC_GAME_API ScriptMgr
         bool OnItemRemove(Player* player, Item* item);
         bool OnCastItemCombatSpell(Player* player, Unit* victim, SpellInfo const* spellInfo, Item* item);
 
+    public: /* AllCreatureScript */
+        void OnAllCreatureUpdate(Creature* creature, uint32 diff);
+        void Creature_SelectLevel(const CreatureTemplate *cinfo, Creature* creature);
+
     public: /* CreatureScript */
 
         CreatureAI* GetCreatureAI(Creature* creature);
+        void OnCreatureUpdate(Creature* creature, uint32 diff);
 
     public: /* GameObjectScript */
 
@@ -1053,6 +1093,7 @@ class TC_GAME_API ScriptMgr
         void ModifyPeriodicDamageAurasTick(Unit* target, Unit* attacker, uint32& damage);
         void ModifyMeleeDamage(Unit* target, Unit* attacker, uint32& damage);
         void ModifySpellDamageTaken(Unit* target, Unit* attacker, int32& damage);
+        uint32 DealDamage(Unit* AttackerUnit, Unit *pVictim, uint32 damage, DamageEffectType damagetype);
 
     private:
         uint32 _scriptCount;

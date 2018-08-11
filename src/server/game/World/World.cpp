@@ -2088,6 +2088,9 @@ void World::SetInitialWorldSettings()
     TC_LOG_INFO("server.loading", "Initializing Opcodes...");
     opcodeTable.Initialize();
 
+    TC_LOG_INFO("server.loading", "Loading VAS Autobalance...");
+    sScriptMgr->SetInitialWorldSettings();
+
     TC_LOG_INFO("server.loading", "Starting Arena Season...");
     sGameEventMgr->StartArenaSeason();
 

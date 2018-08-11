@@ -638,6 +638,14 @@ class TC_GAME_API World
         /// Get the path where data (dbc, maps) are stored on disk
         std::string const& GetDataPath() const { return m_dataPath; }
 
+        /// Return the Mob IDs to be Autobalanced
+        std::string GetVAS40() const { return VAS_AutoBalance_40_Name; }
+        std::string GetVAS25() const { return VAS_AutoBalance_25_Name; }
+        std::string GetVAS20() const { return VAS_AutoBalance_20_Name; }
+        std::string GetVAS10() const { return VAS_AutoBalance_10_Name; }
+        std::string GetVAS5() const { return VAS_AutoBalance_5_Name; }
+        std::string GetVAS2() const { return VAS_AutoBalance_2_Name; }
+
         /// Next daily quests and random bg reset time
         time_t GetNextDailyQuestsResetTime() const { return m_NextDailyQuestReset; }
         time_t GetNextWeeklyQuestsResetTime() const { return m_NextWeeklyQuestReset; }
@@ -797,6 +805,14 @@ class TC_GAME_API World
         static uint8 m_ExitCode;
         uint32 m_ShutdownTimer;
         uint32 m_ShutdownMask;
+
+        std::string VAS_AutoBalance_40_Name;
+        std::string VAS_AutoBalance_25_Name;
+        std::string VAS_AutoBalance_20_Name;
+        std::string VAS_AutoBalance_10_Name;
+        std::string VAS_AutoBalance_5_Name;
+        std::string VAS_AutoBalance_2_Name;
+        std::string VAS_color;
 
         uint32 m_CleaningFlags;
 
