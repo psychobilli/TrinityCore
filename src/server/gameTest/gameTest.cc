@@ -31,7 +31,7 @@ namespace testing
         virtual void TearDown(){}
     };
 
-    TEST_F(gameTest, DatabaseLoader_AddDatabaseConfigFile)
+    TEST(DatabaseLoader, AddDatabaseConfigFile)
     {
         int argc = 0;
         char** argv;
@@ -44,7 +44,7 @@ namespace testing
         ASSERT_TRUE(loader.Load());
     }
 
-    TEST_F(gameTest, WorldSession_InitializeSession)
+    TEST(WorldSession, InitializeSession)
     {
         int argc = 0;
         char** argv;
