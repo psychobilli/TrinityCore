@@ -10,7 +10,9 @@ TEST(WorldServer, Main)
 {
     int argc = 0;
     char **argv = new char*[0];
-    int result = main_moq::main(argc, argv);
+    int result = -1;
+    result = main_moq::main(argc, argv);
+    result = main_moq::Shutdown();
 
     ASSERT_EQ(0, result);
 }

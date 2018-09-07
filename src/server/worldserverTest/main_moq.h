@@ -62,4 +62,5 @@ public:
     static bool LoadRealmInfo(Trinity::Asio::IoContext& ioContext);
     static variables_map GetConsoleArguments(int argc, char** argv, fs::path& configFile, std::string& cfg_service);
     static int main(int argc, char** argv);
+    static int Shutdown();
 };

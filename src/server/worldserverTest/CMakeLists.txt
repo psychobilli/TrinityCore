@@ -32,14 +32,3 @@ target_link_libraries(worldserverTest
     game
     gsoap
     readline)
-CollectIncludeDirectories(
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  ${EXTERNAL_SOURCES}
-  PUBLIC_INCLUDES)
-
-target_include_directories(worldserver
-  PUBLIC
-    ${PUBLIC_INCLUDES}
-  PRIVATE
-    ${CMAKE_CURRENT_BINARY_DIR}
-	${EXTERNAL_SOURCES})
