@@ -81,7 +81,7 @@ char serviceDescription[] = "TrinityCore World of Warcraft emulator world servic
  *  1 - running
  *  2 - paused
  */
- int m_ServiceStatus = 0;
+ int m_ServiceStatus = -1;
  std::shared_ptr<std::vector<std::thread>> *threadPoolRef;
 #endif
 /// Launch the Trinity server
@@ -282,7 +282,7 @@ int main_moq::main(int argc, char** argv)
     if (sConfigMgr->GetBoolDefault("Console.Enable", true))
 #endif
     {
-        cliThread.reset(new std::thread(CliThread));
+        //cliThread.reset(new std::thread(CliThread));
     }
 
     // Set server online (allow connecting now)
@@ -303,7 +303,7 @@ int main_moq::main(int argc, char** argv)
 
     sScriptMgr->OnStartup();
 
-    WorldUpdateLoop();
+    //WorldUpdateLoop();
 
     return 0;
  }
@@ -318,7 +318,7 @@ int main_moq::main(int argc, char** argv)
     sScriptMgr->OnShutdown();
 
     // set server offline
-    //LoginDatabase.DirectPExecute("UPDATE realmlist SET flag = flag | %u WHERE id = '%d'", REALM_FLAG_OFFLINE, realm.Id.Realm);
+    LoginDatabase.DirectPExecute("UPDATE realmlist SET flag = flag | %u WHERE id = '%d'", REALM_FLAG_OFFLINE, realm.Id.Realm);
 
     TC_LOG_INFO("server.worldserver", "Halting process...");
 
