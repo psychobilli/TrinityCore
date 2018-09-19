@@ -6,7 +6,12 @@ list(APPEND LOCAL_SOURCES
 	"main_moq.cpp"
 	"main_moq.h"
 	"FreezeDetector.cpp"
-	"FreezeDetector.h")
+	"FreezeDetector.h"
+	"MoqAsyncAcceptor.cpp"
+	"MoqAsyncAcceptor.h"
+	"MoqWorldSocketMgr.cpp"
+	"MoqWorldSocketMgr.h"
+	"MoqSocketMgr.h")
 list(APPEND EXTERNAL_SOURCES
 	"../worldserver/CommandLine/CliRunnable.cpp"
 	"../worldserver/CommandLine/CliRunnable.h"
@@ -45,6 +50,7 @@ target_include_directories(worldserverMoq
 target_link_libraries(worldserverMoq
     trinity-core-interface
     scripts
+	shared
     game
     gsoap
     readline)

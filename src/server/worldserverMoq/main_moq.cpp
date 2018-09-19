@@ -51,6 +51,7 @@
 #include "../worldserver/TCSoap/TCSoap.h"
 #include "World.h"
 #include "WorldSocket.h"
+#include "MoqWorldSocketMgr.h"
 #include "WorldSocketMgr.h"
 #include <openssl/opensslv.h>
 #include <openssl/crypto.h>
@@ -81,8 +82,10 @@ char serviceDescription[] = "TrinityCore World of Warcraft emulator world servic
  *  1 - running
  *  2 - paused
  */
- int m_ServiceStatus = -1;
+ int m_ServiceStatus = 0;
  std::shared_ptr<std::vector<std::thread>> *threadPoolRef;
+ std::unique_ptr<MoqAsyncAcceptor> raAcceptor;
+ MoqAsyncAcceptor *acceptor;
 #endif
 /// Launch the Trinity server
 int main_moq::main(int argc, char** argv)
@@ -229,7 +232,7 @@ int main_moq::main(int argc, char** argv)
     });
 
     // Start the Remote Access port (acceptor) if enabled
-    std::unique_ptr<AsyncAcceptor> raAcceptor;
+    //std::unique_ptr<AsyncAcceptor> raAcceptor;
     if (sConfigMgr->GetBoolDefault("Ra.Enable", false))
         raAcceptor.reset(StartRaSocketAcceptor(*ioContext));
 
@@ -257,18 +260,18 @@ int main_moq::main(int argc, char** argv)
         return 1;
     }
 
-    if (!sWorldSocketMgr.StartWorldNetwork(*ioContext, worldListener, worldPort, networkThreads))
+    if (!sMoqWorldSocketMgr.StartWorldNetwork(*ioContext, worldListener, worldPort, networkThreads))
     {
         TC_LOG_ERROR("server.worldserver", "Failed to initialize network");
         return 1;
     }
 
-    std::shared_ptr<void> sWorldSocketMgrHandle(nullptr, [](void*)
+    std::shared_ptr<void> sMoqWorldSocketMgrHandle(nullptr, [](void*)
     {
         sWorld->KickAll();              // save and kick all players
         sWorld->UpdateSessions(1);      // real players unload required UpdateSessions call
 
-        sWorldSocketMgr.StopNetwork();
+        sMoqWorldSocketMgr.StopNetwork();
 
         ///- Clean database before leaving
         ClearOnlineAccounts();
@@ -303,7 +306,7 @@ int main_moq::main(int argc, char** argv)
 
     sScriptMgr->OnStartup();
 
-    //WorldUpdateLoop();
+    WorldUpdateLoop();
 
     return 0;
  }
@@ -318,7 +321,7 @@ int main_moq::main(int argc, char** argv)
     sScriptMgr->OnShutdown();
 
     // set server offline
-    LoginDatabase.DirectPExecute("UPDATE realmlist SET flag = flag | %u WHERE id = '%d'", REALM_FLAG_OFFLINE, realm.Id.Realm);
+    //LoginDatabase.DirectPExecute("UPDATE realmlist SET flag = flag | %u WHERE id = '%d'", REALM_FLAG_OFFLINE, realm.Id.Realm);
 
     TC_LOG_INFO("server.worldserver", "Halting process...");
 
@@ -428,12 +431,12 @@ void main_moq::SignalHandler(boost::system::error_code const& error, int /*signa
         World::StopNow(SHUTDOWN_EXIT_CODE);
 }
 
-AsyncAcceptor* main_moq::StartRaSocketAcceptor(Trinity::Asio::IoContext& ioContext)
+MoqAsyncAcceptor* main_moq::StartRaSocketAcceptor(Trinity::Asio::IoContext& ioContext)
 {
     uint16 raPort = uint16(sConfigMgr->GetIntDefault("Ra.Port", 3443));
     std::string raListener = sConfigMgr->GetStringDefault("Ra.IP", "0.0.0.0");
 
-    AsyncAcceptor* acceptor = new AsyncAcceptor(ioContext, raListener, raPort);
+    acceptor = new MoqAsyncAcceptor(ioContext, raListener, raPort);
     if (!acceptor->Bind())
     {
         TC_LOG_ERROR("server.worldserver", "Failed to bind RA socket acceptor");
@@ -592,4 +595,14 @@ variables_map main_moq::GetConsoleArguments(int argc, char** argv, fs::path& con
     }
 
     return vm;
+}
+std::shared_ptr<WorldSocket> main_moq::GetWorldSocket() {
+    if (!acceptor) {
+        std::shared_ptr<Trinity::Asio::IoContext> ioContext = std::make_shared<Trinity::Asio::IoContext>();
+        uint16 raPort = uint16(sConfigMgr->GetIntDefault("Ra.Port", 3443));
+        std::string raListener = sConfigMgr->GetStringDefault("Ra.IP", "0.0.0.0");
+        //raAcceptor.reset(StartRaSocketAcceptor(*ioContext));
+        acceptor = new MoqAsyncAcceptor(*ioContext, raListener, raPort);
+    }
+    return acceptor->BuildWorldSocket();
 }

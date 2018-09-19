@@ -14,6 +14,7 @@
 #include "IoContext.h"
 #include "MapManager.h"
 #include "Metric.h"
+#include "MoqAsyncAcceptor.h"
 #include "MySQLThreading.h"
 #include "ObjectAccessor.h"
 #include "OpenSSLCrypto.h"
@@ -53,7 +54,7 @@ namespace fs = boost::filesystem;
 static class main_moq {
 public:
     static void SignalHandler(boost::system::error_code const& error, int signalNumber);
-    static AsyncAcceptor* StartRaSocketAcceptor(Trinity::Asio::IoContext& ioContext);
+    static MoqAsyncAcceptor* StartRaSocketAcceptor(Trinity::Asio::IoContext& ioContext);
     static bool StartDB();
     static void StopDB();
     static void WorldUpdateLoop();
@@ -63,4 +64,5 @@ public:
     static variables_map GetConsoleArguments(int argc, char** argv, fs::path& configFile, std::string& cfg_service);
     static int main(int argc, char** argv);
     static int Shutdown();
+    static std::shared_ptr<WorldSocket> GetWorldSocket();
 };
