@@ -16,3 +16,13 @@ TEST(WorldServer, Main)
 
     ASSERT_EQ(0, result);
 }
+
+TEST(WorldServer, GetWorldSocket)
+{
+    int argc = 0;
+    char **argv = new char*[0];
+    main_moq::main(argc, argv);
+    std::shared_ptr<WorldSocket> socket = main_moq::GetWorldSocket();
+
+    ASSERT_TRUE(socket);
+}
