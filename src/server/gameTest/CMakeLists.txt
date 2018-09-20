@@ -18,8 +18,8 @@ file(GLOB gameTest_SRC
 add_gmock_test(gameTest ${gameTest_SRC}
 	${PRIVATE_SOURCES})
 target_link_libraries(gameTest
+    trinity-core-interface
 	worldserverMoq
-	game 
-    scripts
-    gsoap
-    readline)
+	game
+    efsw
+    game-interface)
