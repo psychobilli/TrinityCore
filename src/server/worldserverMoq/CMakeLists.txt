@@ -3,8 +3,8 @@ CollectSourceFiles(
   PRIVATE_SOURCES)
   
 list(APPEND LOCAL_SOURCES
-	"main_moq.cpp"
-	"main_moq.h"
+	"WorldServerMoq.cpp"
+	"WorldServerMoq.h"
 	"FreezeDetector.cpp"
 	"FreezeDetector.h"
 	"MoqAsyncAcceptor.cpp"

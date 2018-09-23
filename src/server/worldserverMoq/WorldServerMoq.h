@@ -51,9 +51,9 @@ namespace fs = boost::filesystem;
 #ifdef _WIN32
 #include "ServiceWin32.h"
 #endif
-class main_moq {
+class WorldServerMoq {
 public:
-    main_moq();
+    WorldServerMoq ();
     void SignalHandler(boost::system::error_code const& error, int signalNumber);
     MoqAsyncAcceptor* StartRaSocketAcceptor(Trinity::Asio::IoContext& ioContext);
     bool StartDB();
@@ -63,7 +63,7 @@ public:
     void ShutdownCLIThread(std::thread* cliThread);
     bool LoadRealmInfo(Trinity::Asio::IoContext& ioContext);
     variables_map GetConsoleArguments(int argc, char** argv, fs::path& configFile, std::string& cfg_service);
-    int main(int argc, char** argv);
+    int LaunchServer(int argc, char** argv);
     int Shutdown();
     std::shared_ptr<WorldSocket> GetWorldSocket();
 };

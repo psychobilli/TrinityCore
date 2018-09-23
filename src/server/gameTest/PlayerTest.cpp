@@ -14,7 +14,7 @@ using ::testing::Test;
 #include "SQLOperation.h"
 #include "WorldSocket.h"
 #include "WorldSession.h"
-#include "main_moq.h"
+#include "WorldServerMoq.h"
 #include <boost/filesystem/operations.hpp>
 
 namespace fs = boost::filesystem;
@@ -24,8 +24,8 @@ TEST(Player, LoadPlayer)
     int argc = 0;
     char **argv = new char*[0];
 
-    main_moq* main = new main_moq();
-    main->main(argc, argv);
+    WorldServerMoq* server = new WorldServerMoq();
+    server->LaunchServer(argc, argv);
 
     uint32 id = 1;
     std::shared_ptr<AuthSession> authSession;

@@ -20,7 +20,7 @@
  /// @{
  /// \file
 
-#include "main_moq.h"
+#include "WorldServerMoq.h"
 #include "FreezeDetector.h"
 #include "Common.h"
 #include "AppenderDB.h"
@@ -87,11 +87,11 @@ char serviceDescription[] = "TrinityCore World of Warcraft emulator world servic
  std::unique_ptr<MoqAsyncAcceptor> raAcceptor;
  MoqAsyncAcceptor *acceptor;
 #endif
- main_moq::main_moq() {
+ WorldServerMoq::WorldServerMoq() {
 
 }
 /// Launch the Trinity server
-int main_moq::main(int argc, char** argv)
+int WorldServerMoq::LaunchServer(int argc, char** argv)
 {
     signal(SIGABRT, &Trinity::AbortHandler);
 
@@ -314,7 +314,7 @@ int main_moq::main(int argc, char** argv)
     return 0;
  }
 
- int main_moq::Shutdown()
+ int WorldServerMoq::Shutdown()
  {
     // Shutdown starts here
     threadPoolRef->reset();
@@ -335,7 +335,7 @@ int main_moq::main(int argc, char** argv)
     return World::GetExitCode();
 }
 
-void main_moq::ShutdownCLIThread(std::thread* cliThread)
+void WorldServerMoq::ShutdownCLIThread(std::thread* cliThread)
 {
     if (cliThread != nullptr)
     {
@@ -396,7 +396,7 @@ void main_moq::ShutdownCLIThread(std::thread* cliThread)
     }
 }
 
-void main_moq::WorldUpdateLoop()
+void WorldServerMoq::WorldUpdateLoop()
 {
     uint32 realCurrTime = 0;
     uint32 realPrevTime = getMSTime();
@@ -428,13 +428,13 @@ void main_moq::WorldUpdateLoop()
     }
 }
 
-void main_moq::SignalHandler(boost::system::error_code const& error, int /*signalNumber*/)
+void WorldServerMoq::SignalHandler(boost::system::error_code const& error, int /*signalNumber*/)
 {
     if (!error)
         World::StopNow(SHUTDOWN_EXIT_CODE);
 }
 
-MoqAsyncAcceptor* main_moq::StartRaSocketAcceptor(Trinity::Asio::IoContext& ioContext)
+MoqAsyncAcceptor* WorldServerMoq::StartRaSocketAcceptor(Trinity::Asio::IoContext& ioContext)
 {
     uint16 raPort = uint16(sConfigMgr->GetIntDefault("Ra.Port", 3443));
     std::string raListener = sConfigMgr->GetStringDefault("Ra.IP", "0.0.0.0");
@@ -451,7 +451,7 @@ MoqAsyncAcceptor* main_moq::StartRaSocketAcceptor(Trinity::Asio::IoContext& ioCo
     return acceptor;
 }
 
-bool main_moq::LoadRealmInfo(Trinity::Asio::IoContext& ioContext)
+bool WorldServerMoq::LoadRealmInfo(Trinity::Asio::IoContext& ioContext)
 {
     QueryResult result = LoginDatabase.PQuery("SELECT id, name, address, localAddress, localSubnetMask, port, icon, flag, timezone, allowedSecurityLevel, population, gamebuild FROM realmlist WHERE id = %u", realm.Id.Realm);
     if (!result)
@@ -499,7 +499,7 @@ bool main_moq::LoadRealmInfo(Trinity::Asio::IoContext& ioContext)
 }
 
 /// Initialize connection to the databases
-bool main_moq::StartDB()
+bool WorldServerMoq::StartDB()
 {
     MySQL::Library_Init();
 
@@ -535,7 +535,7 @@ bool main_moq::StartDB()
     return true;
 }
 
-void main_moq::StopDB()
+void WorldServerMoq::StopDB()
 {
     CharacterDatabase.Close();
     WorldDatabase.Close();
@@ -545,7 +545,7 @@ void main_moq::StopDB()
 }
 
 /// Clear 'online' status for all accounts with characters in this realm
-void main_moq::ClearOnlineAccounts()
+void WorldServerMoq::ClearOnlineAccounts()
 {
     // Reset online status for all accounts with characters on the current realm
     LoginDatabase.DirectPExecute("UPDATE account SET online = 0 WHERE online > 0 AND id IN (SELECT acctid FROM realmcharacters WHERE realmid = %d)", realm.Id.Realm);
@@ -559,7 +559,7 @@ void main_moq::ClearOnlineAccounts()
 
 /// @}
 
-variables_map main_moq::GetConsoleArguments(int argc, char** argv, fs::path& configFile, std::string& configService)
+variables_map WorldServerMoq::GetConsoleArguments(int argc, char** argv, fs::path& configFile, std::string& configService)
 {
     // Silences warning about configService not be used if the OS is not Windows
     (void)configService;
@@ -599,7 +599,7 @@ variables_map main_moq::GetConsoleArguments(int argc, char** argv, fs::path& con
 
     return vm;
 }
-std::shared_ptr<WorldSocket> main_moq::GetWorldSocket() {
+std::shared_ptr<WorldSocket> WorldServerMoq::GetWorldSocket() {
     if (!acceptor) {
         std::shared_ptr<Trinity::Asio::IoContext> ioContext = std::make_shared<Trinity::Asio::IoContext>();
         uint16 raPort = uint16(sConfigMgr->GetIntDefault("Ra.Port", 3443));
