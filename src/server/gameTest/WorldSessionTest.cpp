@@ -11,7 +11,8 @@ TEST(WorldSession, CMSG_AUTH_SESSION)
 {
     int argc = 0;
     char** argv = new char*[0];
-    main_moq::main(argc, argv);
+    main_moq* main = new main_moq();
+    main->main(argc, argv);
 
     std::function<std::pair<tcp::socket*, uint32>()> _socketFactory;
     tcp::socket* socket;

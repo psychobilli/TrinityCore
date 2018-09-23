@@ -14,6 +14,7 @@ using ::testing::Test;
 #include "SQLOperation.h"
 #include "WorldSocket.h"
 #include "WorldSession.h"
+#include "main_moq.h"
 #include <boost/filesystem/operations.hpp>
 
 namespace fs = boost::filesystem;
@@ -21,16 +22,10 @@ namespace fs = boost::filesystem;
 TEST(Player, LoadPlayer)
 {
     int argc = 0;
-    char** argv;
-    auto configFile = fs::absolute("E:/Programs/TrinityWrathMod/worldserver.conf.test");
-    std::string configError;
-    sConfigMgr->LoadInitial(configFile.generic_string(), std::vector<std::string>(argv, argv + argc), configError);
-    DatabaseLoader loader("server.worldserver", DatabaseLoader::DATABASE_NONE);
-    loader
-        .AddDatabase(CharacterDatabase, "Character")
-        .AddDatabase(LoginDatabase, "Login")
-        .AddDatabase(WorldDatabase, "World");
-    ASSERT_TRUE(loader.Load());
+    char **argv = new char*[0];
+
+    main_moq* main = new main_moq();
+    main->main(argc, argv);
 
     uint32 id = 1;
     std::shared_ptr<AuthSession> authSession;
@@ -41,9 +36,6 @@ TEST(Player, LoadPlayer)
     WorldSession* _worldSession;
     _worldSession = new WorldSession(id, "ADMIN", worldSocket, AccountTypes(0),
         2, mutetime, LOCALE_enUS, 0, false);
-
-    sScriptMgr->SetScriptLoader(AddScripts);
-    sWorld->SetInitialWorldSettings();
 
     Player* p = new Player(_worldSession);
     ObjectGuid playerGuid;

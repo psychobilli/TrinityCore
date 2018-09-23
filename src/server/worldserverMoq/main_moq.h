@@ -51,18 +51,19 @@ namespace fs = boost::filesystem;
 #ifdef _WIN32
 #include "ServiceWin32.h"
 #endif
-static class main_moq {
+class main_moq {
 public:
-    static void SignalHandler(boost::system::error_code const& error, int signalNumber);
-    static MoqAsyncAcceptor* StartRaSocketAcceptor(Trinity::Asio::IoContext& ioContext);
-    static bool StartDB();
+    main_moq();
+    void SignalHandler(boost::system::error_code const& error, int signalNumber);
+    MoqAsyncAcceptor* StartRaSocketAcceptor(Trinity::Asio::IoContext& ioContext);
+    bool StartDB();
     static void StopDB();
-    static void WorldUpdateLoop();
+    void WorldUpdateLoop();
     static void ClearOnlineAccounts();
-    static void ShutdownCLIThread(std::thread* cliThread);
-    static bool LoadRealmInfo(Trinity::Asio::IoContext& ioContext);
-    static variables_map GetConsoleArguments(int argc, char** argv, fs::path& configFile, std::string& cfg_service);
-    static int main(int argc, char** argv);
-    static int Shutdown();
-    static std::shared_ptr<WorldSocket> GetWorldSocket();
+    void ShutdownCLIThread(std::thread* cliThread);
+    bool LoadRealmInfo(Trinity::Asio::IoContext& ioContext);
+    variables_map GetConsoleArguments(int argc, char** argv, fs::path& configFile, std::string& cfg_service);
+    int main(int argc, char** argv);
+    int Shutdown();
+    std::shared_ptr<WorldSocket> GetWorldSocket();
 };
