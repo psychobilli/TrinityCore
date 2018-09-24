@@ -14,7 +14,6 @@
 #include "IoContext.h"
 #include "MapManager.h"
 #include "Metric.h"
-#include "MoqAsyncAcceptor.h"
 #include "MySQLThreading.h"
 #include "ObjectAccessor.h"
 #include "OpenSSLCrypto.h"
@@ -55,7 +54,7 @@ class WorldServerMoq {
 public:
     WorldServerMoq ();
     void SignalHandler(boost::system::error_code const& error, int signalNumber);
-    MoqAsyncAcceptor* StartRaSocketAcceptor(Trinity::Asio::IoContext& ioContext);
+    AsyncAcceptor* StartRaSocketAcceptor(Trinity::Asio::IoContext& ioContext);
     bool StartDB();
     static void StopDB();
     void WorldUpdateLoop();
@@ -65,5 +64,5 @@ public:
     variables_map GetConsoleArguments(int argc, char** argv, fs::path& configFile, std::string& cfg_service);
     int LaunchServer(int argc, char** argv);
     int Shutdown();
-    std::shared_ptr<WorldSocket> GetWorldSocket();
+    //std::shared_ptr<WorldSocket> GetWorldSocket();
 };

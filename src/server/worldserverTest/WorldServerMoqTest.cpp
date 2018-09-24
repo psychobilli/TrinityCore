@@ -4,6 +4,8 @@ using ::testing::Eq;
 using ::testing::Test;
 
 #include "WorldServerMoq.h"
+#include "WorldSocketMgr.h"
+#include "Network.h"
 char *defaults[] = { "h","e","l","p" };
 
 TEST(WorldServerMoq, LaunchServer)
@@ -24,7 +26,9 @@ TEST(WorldServerMoq, GetWorldSocket)
     char **argv = new char*[0];
     WorldServerMoq* server = new WorldServerMoq();
     server->LaunchServer(argc, argv);
-    std::shared_ptr<WorldSocket> socket = server->GetWorldSocket();
+    tcp::socket* sock = server->GetSocketForAccept();
+    uint32 threadIndex = 0;
+    sWorldSocketMgr.OnSocketOpen(std::move(sock), threadIndex);
 
     ASSERT_TRUE(socket);
 }
