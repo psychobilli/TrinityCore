@@ -32,23 +32,9 @@ TEST(WorldSession, InitializeSession)
     ASSERT_THAT(id, Eq(_worldSession->GetAccountId()));
 }
 
-TEST(WorldSession, CMSG_AUTH_SESSION)
-{
-    int argc = 0;
-    char** argv = new char*[0];
-    WorldServerMoq* server = new WorldServerMoq();
-    server->LaunchServer(argc, argv);
-
-    //tcp::socket&& socket();
-    //WorldSocket *worldSocket = new WorldSocket(socket);
-    std::shared_ptr<WorldSocket> worldSocket;
-    MessageBuffer mb = worldSocket->GetReadBuffer();
-
-    ASSERT_EQ(0, 0);
-}
-
 TEST(WorldSession, HandleMoveTeleportAck)
 {
+    // Arrange
     int argc = 0;
     char** argv = new char*[0];
     WorldServerMoq* server = new WorldServerMoq();
@@ -70,6 +56,16 @@ TEST(WorldSession, HandleMoveTeleportAck)
     holder->Initialize();
     QueryResultHolderFuture _charLoginCallback = CharacterDatabase.DelayQueryHolder(holder);
     p->LoadFromDB(playerGuid, reinterpret_cast<LoginQueryHolder*>(_charLoginCallback.get()));
+    p->SetMovedUnit(p);
+    p->SetSemaphoreTeleportNear(true);
+    bool toNorthrend = false;
+    if (p->GetMap()->GetId() == 571) {
+        p->TeleportTo(608, 1808.819946, 803.929993, 44.363998, 6.282000);
+    }
+    else {
+        toNorthrend = true;
+        p->TeleportTo(571, 5680.7, 487.323, 652.418, 0.882);
+    }
 
     _worldSession->InitializeSession();
     WorldPacket packet(MSG_MOVE_TELEPORT_ACK, 41);
@@ -78,7 +74,10 @@ TEST(WorldSession, HandleMoveTeleportAck)
     packet << uint32(1);
     WorldPacket *packetRef = &packet;
 
+    // Act
     _worldSession->HandleMoveTeleportAck(*packetRef);
+
+    // Assert
 }
 
 TEST(WorldSession, HandleMoveWorldportAckCode)
