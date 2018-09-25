@@ -83,6 +83,7 @@ TEST(WorldSession, HandleMoveTeleportAck)
 
 TEST(WorldSession, HandleMoveWorldportAckCode)
 {
+    // Arrange
     int argc = 0;
     char** argv = new char*[0];
     WorldServerMoq* server = new WorldServerMoq();
@@ -104,6 +105,15 @@ TEST(WorldSession, HandleMoveWorldportAckCode)
     holder->Initialize();
     QueryResultHolderFuture _charLoginCallback = CharacterDatabase.DelayQueryHolder(holder);
     p->LoadFromDB(playerGuid, reinterpret_cast<LoginQueryHolder*>(_charLoginCallback.get()));
+    p->SetSemaphoreTeleportFar(true);
+    bool toNorthrend = false;
+    if (p->GetMap()->GetId() == 571) {
+        p->TeleportTo(608, 1808.819946, 803.929993, 44.363998, 6.282000);
+    }
+    else {
+        toNorthrend = true;
+        p->TeleportTo(571, 5680.7, 487.323, 652.418, 0.882);
+    }
 
     _worldSession->InitializeSession();
     WorldPacket packet(MSG_MOVE_WORLDPORT_ACK, 41);
@@ -112,5 +122,14 @@ TEST(WorldSession, HandleMoveWorldportAckCode)
     packet << uint32(1);
     WorldPacket *packetRef = &packet;
 
+    // Act
     _worldSession->HandleMoveWorldportAckOpcode(*packetRef);
+
+    // Assert
+    if (toNorthrend) {
+        ASSERT_EQ(571, p->GetWorldLocation().GetMapId());
+    }
+    else {
+        ASSERT_EQ(608, p->GetWorldLocation().GetMapId());
+    }
 }
