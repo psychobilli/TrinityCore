@@ -19,7 +19,12 @@
 
 
 // The name of this function should match:
-// void Add${NameOfDirectory}Scripts()
+// void Add${NameOfDirectory}Scripts() 
+void AddSC_VAS_AutoBalance();
+void AddSC_solocraft();
+
 void AddCustomScripts()
 {
+    AddSC_VAS_AutoBalance();
+    AddSC_solocraft();
 }
