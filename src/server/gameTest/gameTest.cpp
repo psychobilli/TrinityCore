@@ -227,6 +227,7 @@ TEST(Map, ResetDungeon)
     _worldSession->HandleMoveWorldportAckOpcode(*portPacketRef);
 
     // Act
+    int instanceId1 = p->GetInstanceId();
     Creature* c = new Creature();
     c->LoadFromDB(79035, p->GetMap(), true, false);
     c->Update(0);
@@ -273,4 +274,5 @@ TEST(Map, ResetDungeon)
     // Assert
     ASSERT_EQ(34, p->GetMap()->GetId());
     ASSERT_TRUE(p->GetMap()->IsDungeon());
+    ASSERT_NE(instanceId1, p->GetInstanceId());
 }
