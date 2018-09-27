@@ -186,7 +186,7 @@ TEST(WorldSession, HandleMoveWorldportAckCode)
     }
 }
 
-TEST(Map, MapUpdate)
+TEST(Map, ResetDungeon)
 {
     // Arrange
     int argc = 0;
@@ -214,21 +214,63 @@ TEST(Map, MapUpdate)
     p->TeleportTo(34, 54.23, 0.28, -18.3424, 6.26);
     _worldSession->InitializeSession();
 
-    //WorldPacket telePacket(MSG_MOVE_TELEPORT_ACK, 41);
-    //telePacket.appendPackGUID(10);
-    //telePacket << uint32(0);
-    //telePacket << uint32(1);
-    //WorldPacket *telePacketRef = &telePacket;
-    //_worldSession->HandleMoveTeleportAck(*telePacketRef);
+    WorldPacket telePacket(MSG_MOVE_TELEPORT_ACK, 41);
+    telePacket.appendPackGUID(10);
+    telePacket << uint32(0);
+    telePacket << uint32(1);
+    WorldPacket *telePacketRef = &telePacket;
+    _worldSession->HandleMoveTeleportAck(*telePacketRef);
 
-    //WorldPacket portPacket(MSG_MOVE_WORLDPORT_ACK, 41);
-    //portPacket.appendPackGUID(10);
-    //WorldPacket *portPacketRef = &portPacket;
-    //_worldSession->HandleMoveWorldportAckOpcode(*portPacketRef);
+    WorldPacket portPacket(MSG_MOVE_WORLDPORT_ACK, 41);
+    portPacket.appendPackGUID(10);
+    WorldPacket *portPacketRef = &portPacket;
+    _worldSession->HandleMoveWorldportAckOpcode(*portPacketRef);
 
     // Act
-    p->GetMap()->Update(34);
+    Creature* c = new Creature();
+    c->LoadFromDB(79035, p->GetMap(), true, false);
+    c->Update(0);
+    int hp = c->GetHealth();
+    c->SetHealth(hp*.2);
+    hp = c->GetHealth();
+    int maxHp = c->GetMaxHealth();
+    ASSERT_NE(maxHp, c->GetHealth());
+
+    p->SetSemaphoreTeleportFar(true);
+    p->TeleportTo(0, -8766.43, 844.892, 88.2311, 3.82961);
+
+    WorldPacket telePacket2(MSG_MOVE_TELEPORT_ACK, 41);
+    telePacket2.appendPackGUID(10);
+    telePacket2 << uint32(0);
+    telePacket2 << uint32(1);
+    WorldPacket *telePacketRef2 = &telePacket2;
+    _worldSession->HandleMoveTeleportAck(*telePacketRef2);
+    _worldSession->HandleMoveWorldportAckOpcode(*portPacketRef);
+
+    WorldPacket resetPacket(CMSG_RESET_INSTANCES, 10);
+    resetPacket.appendPackGUID(797);
+    WorldPacket* resetPacketRef = &resetPacket;
+    _worldSession->HandleResetInstancesOpcode(*resetPacketRef);
+
+    p->SetSemaphoreTeleportFar(true);
+    p->TeleportTo(34, 54.23, 0.28, -18.3424, 6.26);
+
+    WorldPacket telePacket3(MSG_MOVE_TELEPORT_ACK, 41);
+    telePacket3.appendPackGUID(10);
+    telePacket3 << uint32(0);
+    telePacket3 << uint32(1);
+    WorldPacket *telePacketRef3 = &telePacket3;
+    _worldSession->HandleMoveTeleportAck(*telePacketRef3);
+    _worldSession->HandleMoveWorldportAckOpcode(*portPacketRef);
+
+    Creature* cTwo = new Creature();
+    cTwo->LoadFromDB(79035, p->GetMap(), true, false);
+    cTwo->Update(1);
+    int hptwo = cTwo->GetHealth();
+    int maxHptwo = cTwo->GetMaxHealth();
+    ASSERT_EQ(hptwo, maxHp);
 
     // Assert
-    ASSERT_EQ(0, p->GetMap()->GetId());
+    ASSERT_EQ(34, p->GetMap()->GetId());
+    ASSERT_TRUE(p->GetMap()->IsDungeon());
 }
