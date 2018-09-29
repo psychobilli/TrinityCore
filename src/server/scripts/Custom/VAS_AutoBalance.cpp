@@ -45,6 +45,7 @@ struct AutoBalanceCreatureInfo
 {
     uint32 instancePlayerCount;
     float DamageMultiplier;
+    uint32 instanceId;
 };
 
 static std::map<uint32, AutoBalanceCreatureInfo> CreatureInfo; // A hook should be added to remove the mapped entry when the creature is dead or this should be added into the creature object
@@ -295,16 +296,19 @@ public:
 
             ModifyCreatureAttributes(creature);
             CreatureInfo[creature->GetGUID()].instancePlayerCount = instancePlayerCount + PlayerCountDifficultyOffset;
+            CreatureInfo[creature->GetGUID()].instanceId = creature->GetMap()->GetInstanceId();
         }
     }
 
     void OnAllCreatureUpdate(Creature* creature, uint32 diff)
     {
-        if (!(CreatureInfo[creature->GetGUID()].instancePlayerCount == (creature->GetMap()->GetPlayersCountExceptGMs() + PlayerCountDifficultyOffset)))
+        if (!(CreatureInfo[creature->GetGUID()].instancePlayerCount == (creature->GetMap()->GetPlayersCountExceptGMs() + PlayerCountDifficultyOffset)) ||
+            !(CreatureInfo[creature->GetGUID()].instanceId == creature->GetMap()->GetInstanceId()))
         {
             if (creature->GetMap()->IsDungeon() || creature->GetMap()->IsBattleground() || sConfigMgr->GetIntDefault("VASAutoBalance.DungeonsOnly", 1) < 1)
                 ModifyCreatureAttributes(creature);
             CreatureInfo[creature->GetGUID()].instancePlayerCount = creature->GetMap()->GetPlayersCountExceptGMs() + PlayerCountDifficultyOffset;
+            CreatureInfo[creature->GetGUID()].instanceId = creature->GetMap()->GetInstanceId();
         }
     }
 
