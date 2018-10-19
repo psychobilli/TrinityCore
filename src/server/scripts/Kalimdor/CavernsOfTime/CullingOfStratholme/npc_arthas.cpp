@@ -20,7 +20,7 @@
 #include "Log.h"
 #include "PassiveAI.h"
 #include "ScriptMgr.h"
-#include "ScriptedCreature.h"
+#include "ScriptedEscortAI.h"
 #include "ScriptedGossip.h"
 #include "SpellScript.h"
 #include "MoveSplineInit.h"
@@ -60,7 +60,8 @@ enum Entries
     SPELL_MALGANIS_KILL_CREDIT = 58630,
     SPELL_CHROMIE_3_TRANSFORM = 58986,
     GO_CHEST_NORMAL = 190663,
-    GO_CHEST_HEROIC = 193597
+    GO_CHEST_HEROIC = 193597,
+    CITY_EXIT_GATE = 191788 //GUID 67462, GOBJECT ID 191788
 };
 
 enum SplineChains
@@ -1377,6 +1378,12 @@ public:
                     if (Creature* chromie = instance->instance->SummonCreature(NPC_CHROMIE_3, _positions[RP5_CHROMIE_SPAWN]))
                     {
                         // SMOOOOOOOOOOOOOOOOTH AF custom movespline
+                        EscortAI* eai = new EscortAI(chromie);
+                        chromie->SetAI(eai);
+                        eai->AddWaypoint(0, _positions[RP5_CHROMIE_WP1].GetPositionX(), _positions[RP5_CHROMIE_WP1].GetPositionY(), _positions[RP5_CHROMIE_WP1].GetPositionZ());
+                        eai->AddWaypoint(1, _positions[RP5_CHROMIE_WP2].GetPositionX(), _positions[RP5_CHROMIE_WP2].GetPositionY(), _positions[RP5_CHROMIE_WP2].GetPositionZ());
+                        eai->AddWaypoint(2, _positions[RP5_CHROMIE_WP3].GetPositionX(), _positions[RP5_CHROMIE_WP3].GetPositionY(), _positions[RP5_CHROMIE_WP3].GetPositionZ());
+                        eai->SetDespawnAtEnd(false);
                         Movement::MoveSplineInit init(chromie);
                         /*init.Path().push_back(_positions[RP5_CHROMIE_WP1]);
                         init.Path().push_back(_positions[RP5_CHROMIE_WP2]);
@@ -1385,6 +1392,7 @@ public:
                         init.SetFly();
                         init.SetWalk(true);
                         init.Launch();
+                        eai->Start(false, false);
                     }
                     break;
                 case RP5_EVENT_CHROMIE_LAND:
@@ -1397,6 +1405,8 @@ public:
                         chromie->CastSpell(chromie, SPELL_CHROMIE_3_TRANSFORM);
                         chromie->AI()->Talk(RP5_LINE_CHROMIE0);
                         chromie->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP | UNIT_NPC_FLAG_QUESTGIVER);
+                        if (GameObject* gate = chromie->FindNearestGameObject(CITY_EXIT_GATE,100.0f))
+                            gate->SetGoState(GO_STATE_ACTIVE);
                     }
                 default:
                     break;
