@@ -248,6 +248,10 @@ UPDATE `creature_template` SET `ScriptName`="npc_stratholme_fluff_undead",`AINam
 DELETE FROM `smart_scripts` WHERE -`entryorguid` IN (SELECT `guid` FROM `creature` WHERE `id`=27737 AND `map`=595);
 DELETE FROM `conditions` WHERE `SourceTypeOrReferenceId`=22 AND -`SourceEntry` IN (SELECT `guid` FROM `creature` WHERE `id`=27737 AND `map`=595);
 
+-- Correct heroic zombie run speed.
+SELECT @run_speed := `speed_run`, @heroic_entry := `difficulty_entry_1` FROM `creature_template` WHERE name = 'risen zombie';
+UPDATE `creature_template` SET `speed_run` = @run_speed WHERE `entry` = @heroic_entry;
+
 -- Town Hall infinite spawns
 INSERT INTO `creature` (`guid`,`id`,`map`,`spawnMask`,`phaseMask`,`position_x`,`position_y`,`position_z`,`orientation`,`spawntimesecs`,`spawndist`,`movementtype`) VALUES
 (@CGUID+01, 28340, 595, 3, 1, 2398.715, 1207.334, 134.1223, 5.270895, @DAY, 0, 0),
