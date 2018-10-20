@@ -3401,6 +3401,8 @@ bool _isPositiveEffectImpl(SpellInfo const* spellInfo, uint8 effIndex, std::unor
 
     visited.insert({ spellInfo->Id, effIndex });
 
+    //We need scaling level info for some auras that compute bp 0 or positive but should be debuffs
+    float bpScalePerLevel = spellInfo->Effects[effIndex].RealPointsPerLevel;
     int32 bp = spellInfo->Effects[effIndex].CalcValue();
     switch (spellInfo->SpellFamilyName)
     {
@@ -3409,6 +3411,7 @@ bool _isPositiveEffectImpl(SpellInfo const* spellInfo, uint8 effIndex, std::unor
             {
                 case 61987: // Avenging Wrath Marker
                 case 61988: // Divine Shield exclude aura
+                case 64412: // Phase Punch, Algalon the Observer, Ulduar
                 case 72410: // Rune of Blood, Saurfang, Icecrown Citadel
                 case 71204: // Touch of Insignificance, Lady Deathwhisper, Icecrown Citadel
                     return false;
@@ -3432,6 +3435,9 @@ bool _isPositiveEffectImpl(SpellInfo const* spellInfo, uint8 effIndex, std::unor
                 return false;
             // Arcane Missiles
             if (spellInfo->SpellFamilyFlags[0] == 0x00000800)
+                return false;
+            // Mage Slow
+            if (spellInfo->Id == 31589)
                 return false;
             break;
         case SPELLFAMILY_WARRIOR:
@@ -3626,7 +3632,7 @@ bool _isPositiveEffectImpl(SpellInfo const* spellInfo, uint8 effIndex, std::unor
             case SPELL_AURA_MOD_INCREASE_HEALTH_PERCENT:
             case SPELL_AURA_MOD_TOTAL_STAT_PERCENTAGE:
             case SPELL_AURA_MOD_INCREASE_SWIM_SPEED:
-                if (bp < 0)
+                if (bp < 0 || bpScalePerLevel < 0) //TODO: What if both are 0? Should it be a buff or debuff?
                     return false;
                 break;
             case SPELL_AURA_MOD_ATTACKSPEED:            // some buffs have negative bp, check both target and bp
