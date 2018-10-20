@@ -50,6 +50,7 @@ struct AutoBalanceCreatureInfo
 
 static std::map<uint32, AutoBalanceCreatureInfo> CreatureInfo; // A hook should be added to remove the mapped entry when the creature is dead or this should be added into the creature object
 static std::map<int, int> forcedCreatureIds;                   // The map values correspond with the VAS.AutoBalance.XX.Name entries in the configuration file.
+static std::map<int, int> blockedCreatureIds;                  
 static int8 PlayerCountDifficultyOffset; //cheaphack for difficulty server-wide. Another value TODO in player class for the party leader's value to determine dungeon difficulty.
 int GetValidDebugLevel()
 {
@@ -78,6 +79,22 @@ void LoadForcedCreatureIdsFromString(std::string creatureIds, int forcedPlayerCo
     }
 }
 
+void LoadBlockedCreatureIdsFromString(std::string creatureIds, int forcedPlayerCount)
+{
+    std::string delimitedValue;
+    std::stringstream creatureIdsStream;
+
+    creatureIdsStream.str(creatureIds);
+    while (std::getline(creatureIdsStream, delimitedValue, ',')) // Process each Creature ID in the string, delimited by the comma - ","
+    {
+        int creatureId = atoi(delimitedValue.c_str());
+        if (creatureId >= 0)
+        {
+            blockedCreatureIds[creatureId] = forcedPlayerCount;
+        }
+    }
+}
+
 int GetForcedCreatureId(int creatureId)
 {
     if (forcedCreatureIds.find(creatureId) == forcedCreatureIds.end()) // Don't want the forcedCreatureIds map to blowup to a massive empty array
@@ -85,6 +102,14 @@ int GetForcedCreatureId(int creatureId)
         return 0;
     }
     return forcedCreatureIds[creatureId];
+}
+bool IsBlockedCreatureId(int creatureId)
+{
+    if (blockedCreatureIds.find(creatureId) == blockedCreatureIds.end()) // Don't want the blockedCreatureIds map to blowup to a massive empty array
+    {
+        return false;
+    }
+    return true;
 }
 
 class VAS_AutoBalance_WorldScript : public WorldScript
@@ -123,6 +148,13 @@ public:
         LoadForcedCreatureIdsFromString(sConfigMgr->GetStringDefault("VASAutoBalance.ForcedID10", ""), 10);
         LoadForcedCreatureIdsFromString(sConfigMgr->GetStringDefault("VASAutoBalance.ForcedID5", ""), 5);
         LoadForcedCreatureIdsFromString(sConfigMgr->GetStringDefault("VASAutoBalance.ForcedID2", ""), 2);
+        blockedCreatureIds.clear();
+        LoadBlockedCreatureIdsFromString(sConfigMgr->GetStringDefault("VASAutoBalance.BlockedID40", ""), 40);
+        LoadBlockedCreatureIdsFromString(sConfigMgr->GetStringDefault("VASAutoBalance.BlockedID25", ""), 25);
+        LoadBlockedCreatureIdsFromString(sConfigMgr->GetStringDefault("VASAutoBalance.BlockedID20", ""), 20);
+        LoadBlockedCreatureIdsFromString(sConfigMgr->GetStringDefault("VASAutoBalance.BlockedID10", ""), 10);
+        LoadBlockedCreatureIdsFromString(sConfigMgr->GetStringDefault("VASAutoBalance.BlockedID5", ""), 5);
+        LoadBlockedCreatureIdsFromString(sConfigMgr->GetStringDefault("VASAutoBalance.BlockedID2", ""), 2);
         PlayerCountDifficultyOffset = 0;
     }
 };
@@ -302,13 +334,15 @@ public:
 
     void OnAllCreatureUpdate(Creature* creature, uint32 diff)
     {
-        if (!(CreatureInfo[creature->GetGUID()].instancePlayerCount == (creature->GetMap()->GetPlayersCountExceptGMs() + PlayerCountDifficultyOffset)) ||
-            !(CreatureInfo[creature->GetGUID()].instanceId == creature->GetMap()->GetInstanceId()))
-        {
-            if (creature->GetMap()->IsDungeon() || creature->GetMap()->IsBattleground() || sConfigMgr->GetIntDefault("VASAutoBalance.DungeonsOnly", 1) < 1)
-                ModifyCreatureAttributes(creature);
-            CreatureInfo[creature->GetGUID()].instancePlayerCount = creature->GetMap()->GetPlayersCountExceptGMs() + PlayerCountDifficultyOffset;
-            CreatureInfo[creature->GetGUID()].instanceId = creature->GetMap()->GetInstanceId();
+        if (!IsBlockedCreatureId(creature->GetGUID())) {
+            if (!(CreatureInfo[creature->GetGUID()].instancePlayerCount == (creature->GetMap()->GetPlayersCountExceptGMs() + PlayerCountDifficultyOffset)) ||
+                !(CreatureInfo[creature->GetGUID()].instanceId == creature->GetMap()->GetInstanceId()))
+            {
+                if (creature->GetMap()->IsDungeon() || creature->GetMap()->IsBattleground() || sConfigMgr->GetIntDefault("VASAutoBalance.DungeonsOnly", 1) < 1)
+                    ModifyCreatureAttributes(creature);
+                CreatureInfo[creature->GetGUID()].instancePlayerCount = creature->GetMap()->GetPlayersCountExceptGMs() + PlayerCountDifficultyOffset;
+                CreatureInfo[creature->GetGUID()].instanceId = creature->GetMap()->GetInstanceId();
+            }
         }
     }
 
