@@ -50,7 +50,8 @@ struct AutoBalanceCreatureInfo
 
 static std::map<uint32, AutoBalanceCreatureInfo> CreatureInfo; // A hook should be added to remove the mapped entry when the creature is dead or this should be added into the creature object
 static std::map<int, int> forcedCreatureIds;                   // The map values correspond with the VAS.AutoBalance.XX.Name entries in the configuration file.
-static std::map<int, int> blockedCreatureIds;                  
+static std::map<int, int> blockedCreatureIds;
+static std::map<int, int> logCreatureIds;                      // Used to log updates to selected creatures for debugging purposes.
 static int8 PlayerCountDifficultyOffset; //cheaphack for difficulty server-wide. Another value TODO in player class for the party leader's value to determine dungeon difficulty.
 int GetValidDebugLevel()
 {
@@ -94,6 +95,21 @@ void LoadBlockedCreatureIdsFromString(std::string creatureIds, int forcedPlayerC
         }
     }
 }
+void LoadLogCreatureIdsFromString(std::string creatureIds)
+{
+    std::string delimitedValue;
+    std::stringstream creatureIdsStream;
+
+    creatureIdsStream.str(creatureIds);
+    while (std::getline(creatureIdsStream, delimitedValue, ',')) // Process each Creature ID in the string, delimited by the comma - ","
+    {
+        int creatureId = atoi(delimitedValue.c_str());
+        if (creatureId >= 0)
+        {
+            logCreatureIds[creatureId] = 1;
+        }
+    }
+}
 
 int GetForcedCreatureId(int creatureId)
 {
@@ -106,6 +122,14 @@ int GetForcedCreatureId(int creatureId)
 bool IsBlockedCreatureId(int creatureId)
 {
     if (blockedCreatureIds.find(creatureId) == blockedCreatureIds.end()) // Don't want the blockedCreatureIds map to blowup to a massive empty array
+    {
+        return false;
+    }
+    return true;
+}
+bool IsLogCreatureId(int creatureId)
+{
+    if (logCreatureIds.find(creatureId) == logCreatureIds.end()) // Don't want the logCreatureIds map to blowup to a massive empty array
     {
         return false;
     }
@@ -155,6 +179,8 @@ public:
         LoadBlockedCreatureIdsFromString(sConfigMgr->GetStringDefault("VASAutoBalance.BlockedID10", ""), 10);
         LoadBlockedCreatureIdsFromString(sConfigMgr->GetStringDefault("VASAutoBalance.BlockedID5", ""), 5);
         LoadBlockedCreatureIdsFromString(sConfigMgr->GetStringDefault("VASAutoBalance.BlockedID2", ""), 2);
+        logCreatureIds.clear();
+        LoadLogCreatureIdsFromString(sConfigMgr->GetStringDefault("VASAutoBalance.LogCreature", ""));
         PlayerCountDifficultyOffset = 0;
     }
 };
@@ -334,14 +360,35 @@ public:
 
     void OnAllCreatureUpdate(Creature* creature, uint32 diff)
     {
+        bool log = IsLogCreatureId(creature->GetGUID());
+        if (log) {
+            TC_LOG_DEBUG("creature_log", "VAS_Autobalance: CreatureId %u, name %s, is being checked OnAllCreatureUpdate.", creature->GetGUID(), creature->GetName());
+        }
         if (!IsBlockedCreatureId(creature->GetGUID())) {
+            if (log) {
+                TC_LOG_DEBUG("creature_log", "VAS_Autobalance: CreatureId %u, name %s, is not on the blocked list.", creature->GetGUID(), creature->GetName());
+            }
             if (!(CreatureInfo[creature->GetGUID()].instancePlayerCount == (creature->GetMap()->GetPlayersCountExceptGMs() + PlayerCountDifficultyOffset)) ||
                 !(CreatureInfo[creature->GetGUID()].instanceId == creature->GetMap()->GetInstanceId()))
             {
+                if (log) {
+                    TC_LOG_DEBUG("creature_log", "VAS_Autobalance: CreatureId %u, name %s, has passed instanceId and playerCount checks.", creature->GetGUID(), creature->GetName());
+                }
                 if (creature->GetMap()->IsDungeon() || creature->GetMap()->IsBattleground() || sConfigMgr->GetIntDefault("VASAutoBalance.DungeonsOnly", 1) < 1)
+                {
+                    if (log) {
+                        TC_LOG_DEBUG("creature_log", "VAS_Autobalance: CreatureId %u, name %s, is having attributes modified.", creature->GetGUID(), creature->GetName());
+                    }
                     ModifyCreatureAttributes(creature);
+                }
                 CreatureInfo[creature->GetGUID()].instancePlayerCount = creature->GetMap()->GetPlayersCountExceptGMs() + PlayerCountDifficultyOffset;
                 CreatureInfo[creature->GetGUID()].instanceId = creature->GetMap()->GetInstanceId();
+            }
+        }
+        else
+        {
+            if (log) {
+                TC_LOG_DEBUG("creature_log", "VAS_Autobalance: CreatureId %u, name %s, is on the blocked list.", creature->GetGUID(), creature->GetName());
             }
         }
     }
