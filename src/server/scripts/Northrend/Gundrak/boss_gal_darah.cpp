@@ -320,8 +320,9 @@ class achievement_share_the_love : public AchievementCriteriaScript
             if (!target)
                 return false;
 
+            int members = target->GetMap()->GetPlayersCountExceptGMs();
             if (Creature* GalDarah = target->ToCreature())
-                if (GalDarah->AI()->GetData(DATA_SHARE_THE_LOVE) >= 5)
+                if (GalDarah->AI()->GetData(DATA_SHARE_THE_LOVE) >= members)
                     return true;
 
             return false;
