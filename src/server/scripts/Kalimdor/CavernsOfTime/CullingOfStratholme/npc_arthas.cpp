@@ -466,7 +466,7 @@ public:
         inline ProgressStates GetCurrentProgress() { return ProgressStates(instance->GetData(DATA_INSTANCE_PROGRESS)); }
         void AdvanceToState(ProgressStates newState)
         {
-            std::cout << "Arthas AI: Advancing to " << newState << std::endl;
+            TC_LOG_DEBUG("scripts.ai","Arthas AI : Advancing to %u",newState);
             if (!_progressRP)
             {
                 TC_LOG_WARN("scripts.scripts", "CoT4 Arthas AI: Advancing to instance state 0x%X, but RP is paused. Overriding!", newState);
@@ -490,7 +490,7 @@ public:
                 else
                     me->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
 
-                std::cout << "Have snapback for this state, distance from it is " << target.snapbackPos->GetExactDist(me) << " yd" << std::endl;
+                TC_LOG_DEBUG("scripts.ai", "Arthas AI : Have snapback for this state, distance from it is %f yd", target.snapbackPos->GetExactDist(me) );
                 // Snapback handling - if we're too far from where we're supposed to be, teleport there
                 if (target.snapbackPos->GetExactDist(me) > _snapbackDistanceThreshold)
                     me->NearTeleportTo(*target.snapbackPos);
@@ -1385,10 +1385,6 @@ public:
                         eai->AddWaypoint(2, _positions[RP5_CHROMIE_WP3].GetPositionX(), _positions[RP5_CHROMIE_WP3].GetPositionY(), _positions[RP5_CHROMIE_WP3].GetPositionZ());
                         eai->SetDespawnAtEnd(false);
                         Movement::MoveSplineInit init(chromie);
-                        /*init.Path().push_back(_positions[RP5_CHROMIE_WP1]);
-                        init.Path().push_back(_positions[RP5_CHROMIE_WP2]);
-                        init.Path().push_back(_positions[RP5_CHROMIE_WP3]);
-                        init.Path().push_back(_positions[RP5_CHROMIE_WP3]);*/
                         init.SetFly();
                         init.SetWalk(true);
                         init.Launch();
@@ -1453,7 +1449,7 @@ public:
 
         void JustEngagedWith(Unit* who) override
         {
-            std::cout << "Arthas AI: JustEngagedWith - RP in progress? " << _progressRP << std::endl;
+            TC_LOG_DEBUG("scripts.ai", "Arthas AI: JustEngagedWith - RP in progress? %b", _progressRP);
             if (_progressRP)
             {
                 _progressRP = false;
@@ -1461,16 +1457,16 @@ public:
 
                 SplineChainMovementGenerator::GetResumeInfo(_resumeMovement, me);
                 if (!_resumeMovement.Empty())
-                    std::cout << "Arthas AI: spline chain motion paused" << std::endl;
+                    TC_LOG_DEBUG("scripts.ai", "Arthas AI: spline chain motion paused");
                 else
-                    std::cout << "Arthas AI: entered combat without pathing, pausing RP regardless" << std::endl;
+                    TC_LOG_DEBUG("scripts.ai", "Arthas AI: entered combat without pathing, pausing RP regardless");
             }
             ScriptedAI::JustEngagedWith(who);
         }
 
         void EnterEvadeMode(EvadeReason why) override
         {
-            std::cout << "Arthas AI: EnterEvadeMode " << why << std::endl;
+            TC_LOG_DEBUG("scripts.ai", "Arthas AI: EnterEvadeMode %u", why);
             ScriptedAI::EnterEvadeMode(why);
         }
 
@@ -1481,12 +1477,12 @@ public:
             _progressRP = true;
             if (!_resumeMovement.Empty()) // WP motion was interrupted, resume
             {
-                std::cout << "Arthas AI: Resuming motion" << std::endl;
+                TC_LOG_DEBUG("scripts.ai", "Arthas AI: Resuming motion");
                 me->GetMotionMaster()->ResumeSplineChain(_resumeMovement);
                 _resumeMovement.Clear();
             }
             else
-                std::cout << "Arthas AI: Back at leash pos, resuming RP" << std::endl;
+                TC_LOG_DEBUG("scripts.ai", "Arthas AI: Back at leash pos, resuming RP");
 
             if (_afterCombat)
             {
