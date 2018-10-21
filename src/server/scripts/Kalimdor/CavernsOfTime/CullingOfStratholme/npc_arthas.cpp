@@ -1514,7 +1514,7 @@ public:
         bool GossipSelect(Player* player, uint32 /*sender*/, uint32 listId) override
         {
             uint32 const action = GetGossipActionFor(player, listId);
-            std::cout << (player ? player->GetName() : "nullptr") << " select " << action << " on " << me->GetName() << std::endl;
+            TC_LOG_DEBUG("scripts.ai", "Arthas Gossip Select: %s select %u on %s.", (player ? player->GetName() : "nullptr"), action, me->GetName());
             AdvanceDungeon(player, PURGE_PENDING, DATA_START_PURGE);
             AdvanceDungeon(player, TOWN_HALL_PENDING, DATA_START_TOWN_HALL);
             AdvanceDungeon(player, TOWN_HALL_COMPLETE, DATA_TO_GAUNTLET);
@@ -1525,7 +1525,7 @@ public:
 
         bool GossipHello(Player* player) override
         {
-            std::cout << (player ? player->GetName() : "nullptr") << " hello " << me->GetName() << std::endl;
+            TC_LOG_DEBUG("scripts.ai", "Arthas Gossip Select: %s hello %s.", (player ? player->GetName() : "nullptr"), me->GetName());
             return false;
         }
 
