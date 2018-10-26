@@ -425,6 +425,7 @@ class TC_GAME_API UnitScript : public ScriptObject
 
         //VAS AutoBalance
         virtual uint32 DealDamage(Unit* AttackerUnit, Unit *pVictim, uint32 damage, DamageEffectType damagetype) { return damage; }
+        virtual void ModHeal(Unit* /*healer*/, Unit* /*reciever*/, uint32& /*gain*/) { }
 };
 
 class TC_GAME_API CreatureScript : public UnitScript, public UpdatableScript<Creature>
@@ -1094,6 +1095,7 @@ class TC_GAME_API ScriptMgr
         void ModifyMeleeDamage(Unit* target, Unit* attacker, uint32& damage);
         void ModifySpellDamageTaken(Unit* target, Unit* attacker, int32& damage);
         uint32 DealDamage(Unit* AttackerUnit, Unit *pVictim, uint32 damage, DamageEffectType damagetype);
+        void ModHeal(Unit* healer, Unit* reciever, uint32& gain);
 
     private:
         uint32 _scriptCount;

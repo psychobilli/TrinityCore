@@ -219,6 +219,20 @@ public:
         return damage;
     }
 
+    void ModHeal(Unit* healer, Unit* receiver, uint32& gain)
+    {
+        if ((healer->GetMap()->IsDungeon() && receiver->GetMap()->IsDungeon()) || sConfigMgr->GetIntDefault("VASAutoBalance.DungeonsOnly", 1) < 1)
+        {
+            if (!IsBlockedCreatureId(healer->GetEntry()))
+            {
+                if (CreatureInfo[healer->GetGUID()].instanceId == healer->GetMap()->GetInstanceId())
+                {
+                    gain = VAS_Modifer_DealDamage(receiver, gain);
+                }
+            }
+        }
+    }
+
     uint32 HandlePeriodicDamageAurasTick(Unit *target, Unit *caster, int32 damage)
     {
         if ((caster->GetMap()->IsDungeon() && target->GetMap()->IsDungeon()) || sConfigMgr->GetIntDefault("VASAutoBalance.DungeonsOnly", 1) < 1)

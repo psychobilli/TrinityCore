@@ -1835,6 +1835,12 @@ uint32 ScriptMgr::DealDamage(Unit* AttackerUnit, Unit *pVictim, uint32 damage, D
     return damage;
 }
 
+//Called From Unit::DealHeal
+void ScriptMgr::ModHeal(Unit* healer, Unit* reciever, uint32& gain)
+{
+    FOREACH_SCRIPT(UnitScript)->ModHeal(healer, reciever, gain);
+}
+
 // Player
 void ScriptMgr::OnPVPKill(Player* killer, Player* killed)
 {

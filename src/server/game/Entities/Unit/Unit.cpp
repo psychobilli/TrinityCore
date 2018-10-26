@@ -6103,6 +6103,8 @@ void Unit::SetCharm(Unit* charm, bool apply)
     Unit* victim = healInfo.GetTarget();
     uint32 addhealth = healInfo.GetHeal();
 
+    sScriptMgr->ModHeal(healer, victim, (uint32&)addhealth);
+
     if (UnitAI* victimAI = victim->GetAI())
         victimAI->HealReceived(healer, addhealth);
 
