@@ -1,9 +1,12 @@
 -- Correct Call of Duty (25924, 14482)
 set @EasternKingdoms := 0;
+set @NtrlBtrLtTDead := 25477;
+
 set @HrdQstGvrEntry := 41621;
 set @HrdCoDQuestId := 25924;
 set @HrdErunakCreatureId := 41618;
 set @HrdSeeErunakSpell := 77790;
+set @HrdQuestHubArea := 5056;
 set @HrdPosX := -4615.24;
 set @HrdPosY := 3982.79;
 set @HrdPosZ := -70.554;
@@ -14,16 +17,20 @@ update `creature_template` set `AIName` = 'SmartAI' where `entry` = @HrdQstGvrEn
 delete from `smart_scripts` where `entryorguid` = @HrdQstGvrEntry and `source_type` = 0;
 insert into `smart_scripts`
 (`entryorguid`, `source_type`, `id`, `link`, `event_type`, `event_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `event_param_string`, `action_type`, `action_param1`, `action_param2`, `action_param3`, `action_param4`, `action_param5`, `action_param6`, `target_type`, `target_param1`, `target_param2`, `target_param3`, `target_x`, `target_y`, `target_z`, `target_o`, `comment`) VALUES
-(@HrdQstGvrEntry, 0, 0, 0, 19, 0, 100, 512, @HrdCoDQuestId, 0, 0, 0, '', 28, @HrdSeeErunakSpell, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 'Commander Thorak - Accepted Quest - Remove Aura'),
-(@HrdQstGvrEntry, 0, 1, 0, 19, 0, 100, 512, @HrdCoDQuestId, 0, 0, 0, '', 75, @HrdSeeErunakSpell, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 'Commander Thorak - Accepted Quest - Add Aura'),
-(@HrdQstGvrEntry, 0, 2, 0, 19, 0, 100, 512, @HrdCoDQuestId, 0, 0, 0, '', 62, @EasternKingdoms, 0, 0, 0, 0, 0, 7, 0, 0, 0, @HrdPosX, @HrdPosY, @HrdPosZ, @HrdPosO, 'Commander Thorak - Accepted Quest - Teleport');
+(@HrdQstGvrEntry, 0, 0, 0, 19, 0, 100, 512, @HrdCoDQuestId, 0, 0, 0, '', 62, @EasternKingdoms, 0, 0, 0, 0, 0, 7, 0, 0, 0, @HrdPosX, @HrdPosY, @HrdPosZ, @HrdPosO, 'Commander Thorak - Accepted Quest - Teleport');
 
-update `quest_objectives` set `type` = 5, `ObjectID` = @HrdSeeErunakSpell where `QuestID` = @HrdCoDQuestId;
+delete from `spell_area` where `spell` = @HrdSeeErunakSpell;
+insert into `spell_area`
+(`spell`, `area`, `quest_start`, `quest_end`, `aura_spell`, `racemask`, `gender`, `flags`, `quest_start_status`, `quest_end_status`) values
+(@HrdSeeErunakSpell, @HrdQuestHubArea, @HrdCoDQuestId, @NtrlBtrLtTDead, 0, 0, 2, 1, 74, 11);
+
+update `quest_objectives` set `type` = 5, `ObjectID` = @HrdSeeErunakSpell, `Amount` = 0 where `QuestID` = @HrdCoDQuestId;
 
 set @AlyQstGvrEntry := 36799;
 set @AlyCoDQuestId := 14482;
 set @AlyErunakCreatureId := 36915;
 set @AlySeeErunakSpell := 75974;
+set @AlyQuestHubArea := 5012;
 set @AlyPosX := -4455.4;
 set @AlyPosY := 3806.15;
 set @AlyPosZ := -82.5101;
@@ -34,11 +41,14 @@ update `creature_template` set `AIName` = 'SmartAI' where `entry` = @AlyQstGvrEn
 delete from `smart_scripts` where `entryorguid` = @AlyQstGvrEntry and `source_type` = 0;
 insert into `smart_scripts`
 (`entryorguid`, `source_type`, `id`, `link`, `event_type`, `event_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `event_param_string`, `action_type`, `action_param1`, `action_param2`, `action_param3`, `action_param4`, `action_param5`, `action_param6`, `target_type`, `target_param1`, `target_param2`, `target_param3`, `target_x`, `target_y`, `target_z`, `target_o`, `comment`) VALUES
-(@AlyQstGvrEntry, 0, 0, 0, 19, 0, 100, 512, @AlyCoDQuestId, 0, 0, 0, '', 28, @AlySeeErunakSpell, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 'Recruiter Burns - Accepted Quest - Remove Aura'),
-(@AlyQstGvrEntry, 0, 1, 0, 19, 0, 100, 512, @AlyCoDQuestId, 0, 0, 0, '', 75, @AlySeeErunakSpell, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 'Recruiter Burns - Accepted Quest - Add Aura'),
-(@AlyQstGvrEntry, 0, 2, 0, 19, 0, 100, 512, @AlyCoDQuestId, 0, 0, 0, '', 62, @EasternKingdoms, 0, 0, 0, 0, 0, 7, 0, 0, 0, @AlyPosX, @AlyPosY, @AlyPosZ, @AlyPosO, 'Recruiter Burns - Accepted Quest - Teleport');
+(@AlyQstGvrEntry, 0, 1, 0, 19, 0, 100, 512, @AlyCoDQuestId, 0, 0, 0, '', 62, @EasternKingdoms, 0, 0, 0, 0, 0, 7, 0, 0, 0, @AlyPosX, @AlyPosY, @AlyPosZ, @AlyPosO, 'Recruiter Burns - Accepted Quest - Teleport');
 
-update `quest_objectives` set `type` = 5, `ObjectID` = @AlySeeErunakSpell where `QuestID` = @AlyCoDQuestId;
+delete from `spell_area` where `spell` = @AlySeeErunakSpell;
+insert into `spell_area`
+(`spell`, `area`, `quest_start`, `quest_end`, `aura_spell`, `racemask`, `gender`, `flags`, `quest_start_status`, `quest_end_status`) values
+(@AlySeeErunakSpell, @AlyQuestHubArea, @AlyCoDQuestId, @NtrlBtrLtTDead, 0, 0, 2, 1, 74, 11);
+
+update `quest_objectives` set `type` = 5, `ObjectID` = @AlySeeErunakSpell, `Amount` = 0  where `QuestID` = @AlyCoDQuestId;
 
 -- # ID, QuestID, Type, Order, StorageIndex, ObjectID, Amount, Flags, Flags2, ProgressBarWeight, Description, VerifiedBuild
 -- '266167', '14482', '0', '0', '0', '36915', '1', '0', '0', '0', 'Ride the mercenary ship to Vashj\'ir', '25549'
