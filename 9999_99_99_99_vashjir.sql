@@ -1,3 +1,34 @@
+-- Correct Eye of the Storm (28805, 28826)
+set @WaterOfFarseeingNPC := 50088;
+set @WaterOfFarseeingKC := 50054;
+set @WaterOfFarseeingEntry := 33438;
+set @HrdWaterOfFarseeingGuid := 211321;
+set @AlyWaterOfFarseeingGuid := 220598;
+set @HrdWaterOfFarseeingEntry := 207414;
+set @AlyWaterOfFarseeingEntry := 207416;
+
+delete from `creature` where `id` = @WaterOfFarseeingKC;
+set @newGuid := (select max(guid) from creature);
+insert into `creature`
+(`guid`,`id`, `map`, `zoneId`, `areaId`, `spawnDifficulties`, `phaseUseFlags`, `PhaseId`, `PhaseGroup`, `terrainSwapMap`, `modelid`, `equipment_id`, `position_x`, `position_y`, `position_z`, `orientation`, `spawntimesecs`, `spawndist`, `currentwaypoint`, `curhealth`, `curmana`, `MovementType`, `npcflag`, `unit_flags`, `unit_flags2`, `unit_flags3`, `dynamicflags`, `ScriptName`, `VerifiedBuild`)
+select (@newGuid := @newGuid + 1), @WaterOfFarseeingKC, `map`, `zoneId`, `areaId`, `spawnDifficulties`, `phaseUseFlags`, `PhaseId`, `PhaseGroup`, `terrainSwapMap`, `modelid`, `equipment_id`, `position_x`, `position_y`, `position_z`, `orientation`, `spawntimesecs`, `spawndist`, `currentwaypoint`, `curhealth`, `curmana`, `MovementType`, `npcflag`, `unit_flags`, `unit_flags2`, `unit_flags3`, `dynamicflags`, `ScriptName`, `VerifiedBuild`
+from `creature` where `id` = @WaterOfFarseeingNPC;
+
+set @HrdWaterOfFarseeingKCGuid := (select `guid` from `creature` where `id` = @WaterOfFarseeingKC and `map` = 1);
+set @AlyWaterOfFarseeingKCGuid := (select `guid` from `creature` where `id` = @WaterOfFarseeingKC and `map` = 0);
+
+update `gameobject_template` set `AIName` = 'SmartGameObjectAI' where `entry` in (@HrdWaterOfFarseeingEntry,@AlyWaterOfFarseeingEntry);
+
+delete from `smart_scripts` where `entryorguid` in (@HrdWaterOfFarseeingEntry, @AlyWaterOfFarseeingEntry) and `source_type` = 1;
+delete from `smart_scripts` where `entryorguid` = @WaterOfFarseeingKC and `source_type` = 0;
+insert into `smart_scripts`
+(`entryorguid`, `source_type`, `id`, `link`, `event_type`, `event_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `event_param_string`, `action_type`, `action_param1`, `action_param2`, `action_param3`, `action_param4`, `action_param5`, `action_param6`, `target_type`, `target_param1`, `target_param2`, `target_param3`, `target_x`, `target_y`, `target_z`, `target_o`, `comment`) VALUES
+(@HrdWaterOfFarseeingEntry, 1, 0, 1, 70, 0, 100, 0, 2, 0, 0, 0, '', 45, 1, 1, 0, 0, 0, 0, 10, @HrdWaterOfFarseeingKCGuid, @WaterOfFarseeingKC, 0, 0, 0, 0, 0, 'Waters of Farseeing - On Gameobject State Changed - Set Data 1 1'),
+(@HrdWaterOfFarseeingEntry, 1, 1, 0, 61, 0, 100, 0, 0, 0, 0, 0, '', 33, @WaterOfFarseeingKC, 0, 0, 0, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 'Waters of Farseeing - On Gameobject State Changed - Waters of Farseeing Kill Credit'),
+(@AlyWaterOfFarseeingEntry, 1, 0, 1, 70, 0, 100, 0, 2, 0, 0, 0, '', 45, 1, 1, 0, 0, 0, 0, 10, @AlyWaterOfFarseeingKCGuid, @WaterOfFarseeingKC, 0, 0, 0, 0, 0, 'Waters of Farseeing - On Gameobject State Changed - Set Data 1 1'),
+(@AlyWaterOfFarseeingEntry, 1, 1, 0, 61, 0, 100, 0, 0, 0, 0, 0, '', 33, @WaterOfFarseeingKC, 0, 0, 0, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 'Waters of Farseeing - On Gameobject State Changed - Waters of Farseeing Kill Credit'),
+(@WaterOfFarseeingKC, 0, 0, 1, 38, 0, 100, 512, 1, 1, 0, 0, '', 45, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 'Waters of Farseeing Kill Credit - On Data Set 1 1 - Set Data 1 0');
+
 -- Correct Call of Duty (25924, 14482)
 set @EasternKingdoms := 0;
 set @NtrlBtrLtTDead := 25477;
