@@ -22,9 +22,11 @@
 // void Add${NameOfDirectory}Scripts() 
 void AddSC_VAS_AutoBalance();
 void AddSC_solocraft();
+void AddSC_AutoLearnOnLevel();
 
 void AddCustomScripts()
 {
     AddSC_VAS_AutoBalance();
     AddSC_solocraft();
+    AddSC_AutoLearnOnLevel();
 }
