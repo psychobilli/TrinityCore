@@ -12,6 +12,12 @@ struct AutoLearnSpellInfo
     uint32 ReqLevel;
 };
 
+struct AutoLearnSpellReqs
+{
+    AutoLearnSpellInfo SpellInfo;
+    std::list<uint32> ReqSpell;
+};
+
 class AutoLearnOnLevel : PlayerScript
 {
 public:
@@ -20,16 +26,27 @@ public:
     void OnLevelChanged(Player* player, uint8 oldLevel) override
     {
         uint8 currLevel = player->getLevel();
-        std::list<AutoLearnSpellInfo> alsiList = GetNpcSpellListing(player->getClass(), player->getRace(), oldLevel, currLevel);
+        std::list<AutoLearnSpellInfo> infoList = GetNpcSpellListing(player->getClass(), player->getRace(), oldLevel, currLevel);
+        std::list<AutoLearnSpellReqs> reqsList = GetRequiredSpells(infoList);
 
         for (uint32 level = oldLevel + 1; level <= currLevel; level++) {
-            for (AutoLearnSpellInfo alsi : alsiList) {
-                if (alsi.ReqLevel == level) {
-                    bool dependent = false;
-                    if (alsi.ReqSkillLine > 0) {
-                        dependent = true;
+            for (AutoLearnSpellReqs reqs : reqsList) {
+                if (reqs.SpellInfo.ReqLevel == level) {
+                    if (reqs.ReqSpell.empty()) {
+                        player->LearnSpell(reqs.SpellInfo.SpellID, false, false);
                     }
-                    player->LearnSpell(alsi.SpellID, dependent, false);
+                    else {
+                        uint8 spells = reqs.ReqSpell.size();
+                        uint8 spellCount = 0;
+                        for (uint32 reqSpell : reqs.ReqSpell) {
+                            if (player->HasSpell(reqSpell)) {
+                                spellCount += 1;
+                            }
+                        }
+                        if (spells == spellCount) {
+                            player->LearnSpell(reqs.SpellInfo.SpellID, false, false);
+                        }
+                    }
                 }
             }
         }
@@ -75,7 +92,7 @@ private:
             trainerReference = "200001,200002";
             break;
         }
-        std::list<AutoLearnSpellInfo> alsiList;
+        std::list<AutoLearnSpellInfo> infoList;
         if (trainerReference.size() > 0) {
             QueryResult result = WorldDatabase.PQuery("SELECT SpellId, ReqSkillLine, ReqLevel FROM npc_trainer WHERE ID IN (%s) AND ReqLevel BETWEEN %u AND %u", trainerReference, (oldLevel + 1), currentLevel);
 
@@ -84,16 +101,80 @@ private:
                 do
                 {
                     Field* fields = result->Fetch();
-                    AutoLearnSpellInfo alsi;
-                    alsi.SpellID = fields[0].GetInt32();
-                    alsi.ReqSkillLine = fields[1].GetInt32();
-                    alsi.ReqLevel = fields[2].GetInt32();
+                    AutoLearnSpellInfo info;
+                    info.SpellID = fields[0].GetInt32();
+                    info.ReqSkillLine = fields[1].GetInt32();
+                    info.ReqLevel = fields[2].GetInt32();
 
-                    alsiList.push_back(alsi);
+                    infoList.push_back(info);
                 } while (result->NextRow());
             }
         }
-        return alsiList;
+        return infoList;
+    }
+
+    std::list<AutoLearnSpellReqs> GetRequiredSpells(std::list<AutoLearnSpellInfo> infoList) {
+        std::string spellIds = "";
+        for (AutoLearnSpellInfo info : infoList) {
+            if (spellIds.length() > 0) {
+                spellIds += ",";
+            }
+            spellIds += std::to_string(info.SpellID);
+        }
+        std::list<AutoLearnSpellReqs> reqsList;
+        if (spellIds.length() > 0)
+        {
+            QueryResult result = WorldDatabase.PQuery("select first_spell_id, spell_id from spell_ranks where spell_id in (%s) union select req_spell, spell_id from spell_required where spell_id in (%s) order by spell_id", spellIds, spellIds);
+            if (result)
+            {
+                AutoLearnSpellReqs spellReqs;
+                spellReqs.SpellInfo.SpellID = 0;
+                uint32 spellId = 0;
+                uint32 reqSpell = 0;
+                do
+                {
+                    Field* fields = result->Fetch();
+                    spellId = fields[1].GetInt32();
+
+                    if (spellReqs.SpellInfo.SpellID != spellId) {
+                        if (spellReqs.SpellInfo.SpellID > 0) {
+                            reqsList.push_back(spellReqs);
+                            spellReqs = AutoLearnSpellReqs();
+                        }
+                        for (AutoLearnSpellInfo info : infoList) {
+                            if (info.SpellID == spellId) {
+                                spellReqs.SpellInfo = info;
+                                break;
+                            }
+                        }
+                    }
+
+                    reqSpell = fields[0].GetInt32();
+                    if (reqSpell > 0 && reqSpell != spellId) {
+                        spellReqs.ReqSpell.push_back(reqSpell);
+                    }
+                } while (result->NextRow());
+
+                if (reqSpell > 0 && reqSpell != spellId) {
+                    spellReqs.ReqSpell.push_back(reqSpell);
+                }
+                reqsList.push_back(spellReqs);
+            }
+        }
+        for (AutoLearnSpellInfo info : infoList) {
+            bool noReqs = true;
+            for (AutoLearnSpellReqs reqs : reqsList) {
+                if (info.SpellID == reqs.SpellInfo.SpellID) {
+                    noReqs = false;
+                }
+            }
+            if (noReqs) {
+                AutoLearnSpellReqs spellReq;
+                spellReq.SpellInfo = info;
+                reqsList.push_back(spellReq);
+            }
+        }
+        return reqsList;
     }
 };
 
