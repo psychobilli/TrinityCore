@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2018 TrinityCore <https://www.trinitycore.org/>
+ * Copyright (C) 2008-2019 TrinityCore <https://www.trinitycore.org/>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -122,11 +122,15 @@ bool Trinity::Hyperlinks::LinkTags::talent::StoreTo(TalentLinkData& val, char co
 {
     HyperlinkDataTokenizer t(pos, len);
     uint32 talentId;
-    if (!(t.TryConsumeTo(talentId) && t.TryConsumeTo(val.Rank) && t.IsEmpty()))
+    int8 rank; // talent links contain <learned rank>-1, we store <learned rank>
+    if (!(t.TryConsumeTo(talentId) && t.TryConsumeTo(rank) && t.IsEmpty()))
         return false;
+    if (rank < -1 || rank > 4)
+        return false;
+    val.Rank = rank+1;
     if (!(val.Talent = sTalentStore.LookupEntry(talentId)))
         return false;
-    if (!val.Talent->RankID[val.Rank-1])
+    if (val.Rank > 0 && !val.Talent->RankID[val.Rank - 1])
         return false;
     return true;
 }
