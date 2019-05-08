@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2018 TrinityCore <https://www.trinitycore.org/>
+ * Copyright (C) 2008-2019 TrinityCore <https://www.trinitycore.org/>
  * Copyright (C) 2005-2009 MaNGOS <http://getmangos.com/>
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -405,7 +405,7 @@ class TC_GAME_API UnitScript : public ScriptObject
 {
     protected:
 
-        UnitScript(char const* name, bool addToScripts = true);
+        UnitScript(char const* name);
 
     public:
         // Called when a unit deals healing to another unit
@@ -428,7 +428,7 @@ class TC_GAME_API UnitScript : public ScriptObject
         virtual void ModHeal(Unit* /*healer*/, Unit* /*reciever*/, uint32& /*gain*/) { }
 };
 
-class TC_GAME_API CreatureScript : public UnitScript, public UpdatableScript<Creature>
+class TC_GAME_API CreatureScript : public ScriptObject, public UpdatableScript<Creature>
 {
     protected:
 
@@ -636,7 +636,7 @@ class TC_GAME_API AchievementCriteriaScript : public ScriptObject
         virtual bool OnCheck(Player* source, Unit* target) = 0;
 };
 
-class TC_GAME_API PlayerScript : public UnitScript
+class TC_GAME_API PlayerScript : public ScriptObject
 {
     protected:
 

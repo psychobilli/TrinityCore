@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2018 TrinityCore <https://www.trinitycore.org/>
+ * Copyright (C) 2008-2019 TrinityCore <https://www.trinitycore.org/>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -271,7 +271,7 @@ struct LinkValidator<LinkTags::talent>
 {
     static bool IsTextValid(TalentLinkData const& data, char const* pos, size_t len)
     {
-        if (SpellInfo const* info = sSpellMgr->GetSpellInfo(data.Talent->RankID[data.Rank-1]))
+        if (SpellInfo const* info = sSpellMgr->GetSpellInfo(data.Talent->RankID[0]))
             return LinkValidator<LinkTags::spell>::IsTextValid(info, pos, len);
         return false;
     }
