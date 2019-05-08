@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2018 TrinityCore <https://www.trinitycore.org/>
+ * Copyright (C) 2008-2019 TrinityCore <https://www.trinitycore.org/>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -15,10 +15,9 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ScriptMgr.h"
+#include "culling_of_stratholme.h"
 #include "CreatureAI.h"
 #include "CreatureTextMgr.h"
-#include "culling_of_stratholme.h"
 #include "EventMap.h"
 #include "GameObject.h"
 #include "GameTime.h"
@@ -26,9 +25,10 @@
 #include "Map.h"
 #include "MotionMaster.h"
 #include "Player.h"
+#include "ScriptMgr.h"
 #include "SpellInfo.h"
 #include "TemporarySummon.h"
-#include "Map.h"
+#include "WorldStatePackets.h"
 
  /* Culling of Stratholme encounters:
  0 - Meathook
@@ -199,10 +199,10 @@ public:
             _plagueCrates.reserve(NUM_PLAGUE_CRATES);
         }
 
-        void FillInitialWorldStates(WorldPacket& data) override
+            void FillInitialWorldStates(WorldPackets::WorldState::InitWorldStates& packet) override
         {
             for (WorldStateMap::const_iterator it = _sentWorldStates.begin(); it != _sentWorldStates.end(); ++it)
-                data << uint32(it->first) << uint32(it->second);
+                packet.Worldstates.emplace_back(uint32(it->first),uint32(it->second));
         }
 
         void WriteSaveDataMore(std::ostringstream& data) override

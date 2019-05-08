@@ -1379,7 +1379,7 @@ public:
                     {
                         // SMOOOOOOOOOOOOOOOOTH AF custom movespline
                         EscortAI* eai = new EscortAI(chromie);
-                        chromie->SetAI(eai);
+                        chromie->PushAI(eai);
                         eai->AddWaypoint(0, _positions[RP5_CHROMIE_WP1].GetPositionX(), _positions[RP5_CHROMIE_WP1].GetPositionY(), _positions[RP5_CHROMIE_WP1].GetPositionZ());
                         eai->AddWaypoint(1, _positions[RP5_CHROMIE_WP2].GetPositionX(), _positions[RP5_CHROMIE_WP2].GetPositionY(), _positions[RP5_CHROMIE_WP2].GetPositionZ());
                         eai->AddWaypoint(2, _positions[RP5_CHROMIE_WP3].GetPositionX(), _positions[RP5_CHROMIE_WP3].GetPositionY(), _positions[RP5_CHROMIE_WP3].GetPositionZ());
