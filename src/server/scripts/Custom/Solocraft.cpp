@@ -29,6 +29,12 @@ namespace {
             if (sConfigMgr->GetBoolDefault("Solocraft.Enable", true))
             {
                 ChatHandler(player->GetSession()).SendSysMessage("Solocraft mode activated in raids");
+                _justLoggedIn = true;
+                Map *map = player->GetMap();
+                int difficulty = CalculateDifficulty(map, player);
+                int numInGroup = GetNumInGroup(player);
+                ApplyBuffs(player, map, difficulty, numInGroup);
+                _justLoggedIn = false;
             }
         }
 
@@ -42,6 +48,7 @@ namespace {
         }
     private:
         std::map<ObjectGuid, int> _unitDifficulty;
+        bool _justLoggedIn = false;
 
         int CalculateDifficulty(Map *map, Player *player) {
             int difficulty = 1;
@@ -73,7 +80,9 @@ namespace {
         }
 
         void ApplyBuffs(Player *player, Map *map, int difficulty, int numInGroup) {
-            ClearBuffs(player, map);
+            if (!_justLoggedIn) {
+                ClearBuffs(player, map);
+            }
             if (difficulty > 1) {
                 //InstanceMap *instanceMap = map->ToInstanceMap();
                 //InstanceScript *instanceScript = instanceMap->GetInstanceScript();
