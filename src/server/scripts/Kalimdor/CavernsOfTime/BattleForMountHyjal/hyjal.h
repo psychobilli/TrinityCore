@@ -94,7 +94,7 @@ enum HYGameobjectIds
     GO_ROARING_FLAME            = 182592
 };
 
-#define MINRAIDDAMAGE 700000 // minimal damage before trash can drop loot and reputation, resets if faction leader dies
+#define MINRAIDDAMAGE 70000 // minimal damage before trash can drop loot and reputation, resets if faction leader dies
 
 template <class AI, class T>
 inline AI* GetHyjalAI(T* obj)
