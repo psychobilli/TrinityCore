@@ -227,8 +227,10 @@ public:
             case TYPE_RIFT:
                 if (data == SPECIAL)
                 {
-                    if (mRiftPortalCount < 7)
-                        ScheduleEventNextPortal(5000);
+                    if (mRiftPortalCount == 6 || mRiftPortalCount == 12)
+                        ScheduleEventNextPortal(180000);
+                    else
+                        ScheduleEventNextPortal(60000);
                 }
                 else
                     m_auiEncounter[1] = data;
@@ -334,7 +336,8 @@ public:
             {
                 ++mRiftPortalCount;
                 DoUpdateWorldState(WORLD_STATE_BM_RIFT, mRiftPortalCount);
-                DoSpawnPortal();
+                if (mRiftPortalCount < 18)
+                    DoSpawnPortal();
                 ScheduleEventNextPortal(RiftWaves[GetRiftWaveId()].NextPortalTime);
             }
         }
