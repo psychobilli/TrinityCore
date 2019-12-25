@@ -548,8 +548,18 @@ public:
                     if (PlayerGUID)
                     {
                         Player* player = ObjectAccessor::GetPlayer(*me, PlayerGUID);
-                        if (player && player->GetQuestStatus(11020) == QUEST_STATUS_INCOMPLETE)
-                            player->KilledMonsterCredit(23209);
+                        Group* group = player->GetGroup();
+                        if (group) {
+                            for (Group::member_citerator citr = group->GetMemberSlots().begin(); citr != group->GetMemberSlots().end(); ++citr) {
+                                Player* groupie = ObjectAccessor::FindConnectedPlayer(citr->guid);
+                                if (groupie && groupie->GetQuestStatus(11020) == QUEST_STATUS_INCOMPLETE)
+                                    groupie->KilledMonsterCredit(23209);
+                            }
+                        }
+                        else {
+                            if (player && player->GetQuestStatus(11020) == QUEST_STATUS_INCOMPLETE)
+                                player->KilledMonsterCredit(23209);
+                        }
                     }
                     PoisonTimer = 0;
                     me->KillSelf();
