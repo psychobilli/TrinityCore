@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2019 TrinityCore <https://www.trinitycore.org/>
+ * This file is part of the TrinityCore Project. See AUTHORS file for Copyright information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -1791,7 +1791,7 @@ class spell_sha_stoneclaw_totem : public SpellScript
         Unit* target = GetHitUnit();
 
         // Cast Absorb on totems
-        for (uint8 slot = SUMMON_SLOT_TOTEM; slot < MAX_TOTEM_SLOT; ++slot)
+        for (uint8 slot = SUMMON_SLOT_TOTEM_FIRE; slot < MAX_TOTEM_SLOT; ++slot)
         {
             if (!target->m_SummonSlot[slot])
                 continue;
@@ -1988,7 +1988,7 @@ public:
         void HandleDummy(AuraEffect const* aurEff)
         {
             Unit* target = GetTarget();
-            for (uint8 i = SUMMON_SLOT_TOTEM; i < MAX_TOTEM_SLOT; ++i)
+            for (uint8 i = SUMMON_SLOT_TOTEM_FIRE; i < MAX_TOTEM_SLOT; ++i)
                 if (!target->m_SummonSlot[i])
                     return;
 
@@ -2037,7 +2037,7 @@ class spell_sha_t3_6p_bonus : public SpellScriptLoader
                 Unit* caster = eventInfo.GetActor();
                 Unit* target = eventInfo.GetProcTarget();
 
-                switch (target->getClass())
+                switch (target->GetClass())
                 {
                     case CLASS_PALADIN:
                     case CLASS_PRIEST:
