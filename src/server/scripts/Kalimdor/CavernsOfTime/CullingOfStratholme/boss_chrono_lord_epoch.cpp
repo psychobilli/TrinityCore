@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2019 TrinityCore <https://www.trinitycore.org/>
+ * This file is part of the TrinityCore Project. See AUTHORS file for Copyright information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -15,11 +15,15 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ScriptMgr.h"
 #include "culling_of_stratholme.h"
+#include "InstanceScript.h"
+#include "ObjectAccessor.h"
 #include "ScriptedCreature.h"
+#include "ScriptMgr.h"
+#include "SpellInfo.h"
+#include <vector>
 
-    enum Spells
+enum Spells
 {
     SPELL_CURSE_OF_EXERTION = 52772,
     SPELL_TIME_WARP = 52766,
@@ -33,7 +37,6 @@ enum Yells
 {
     SAY_TIME_WARP = 2,
     SAY_SLAY = 3,
-    SAY_DEATH = 4
 };
 
 enum Events
@@ -47,112 +50,112 @@ enum Events
 
 class boss_epoch : public CreatureScript
 {
-public:
-    boss_epoch() : CreatureScript("boss_epoch") { }
+    public:
+        boss_epoch() : CreatureScript("boss_epoch") { }
 
-    struct boss_epochAI : public BossAI
-    {
-        boss_epochAI(Creature* creature) : BossAI(creature, DATA_EPOCH), _stepTargetIndex(0) { }
-
-        void InitializeAI() override
+        struct boss_epochAI : public BossAI
         {
-            if (instance->GetBossState(DATA_EPOCH) == DONE)
-                me->RemoveLootMode(LOOT_MODE_DEFAULT);
-        }
+            boss_epochAI(Creature* creature) : BossAI(creature, DATA_EPOCH), _stepTargetIndex(0) { }
 
-        void JustEngagedWith(Unit* /*who*/) override
-        {
-            _JustEngagedWith();
-
-            _stepTargetIndex = 0;
-            _stepTargets.clear();
-            events.ScheduleEvent(EVENT_WOUNDING_STRIKE, Seconds(4), Seconds(6));
-            events.ScheduleEvent(EVENT_CURSE_OF_EXERTION, Seconds(10), Seconds(17));
-            events.ScheduleEvent(EVENT_TIME_WARP, Seconds(25));
-            if (IsHeroic())
-                events.ScheduleEvent(EVENT_TIME_STOP, Seconds(15));
-        }
-
-        void ExecuteEvent(uint32 eventId) override
-        {
-            switch (eventId)
+            void InitializeAI() override
             {
-            case EVENT_CURSE_OF_EXERTION:
-                if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, 100.0f, true))
-                    DoCast(target, SPELL_CURSE_OF_EXERTION);
-                events.ScheduleEvent(EVENT_CURSE_OF_EXERTION, 9300);
-                break;
-            case EVENT_TIME_WARP:
-                Talk(SAY_TIME_WARP);
-                DoCastAOE(SPELL_TIME_WARP);
-                DoCastAOE(SPELL_TIME_STEP_DUMMY);
-                events.Repeat(Seconds(25));
-                break;
-            case EVENT_TIME_STOP:
-                DoCastAOE(SPELL_TIME_STOP);
-                events.Repeat(Seconds(25));
-                break;
-            case EVENT_WOUNDING_STRIKE:
-                DoCastVictim(SPELL_WOUNDING_STRIKE);
-                events.Repeat(Seconds(12), Seconds(18));
-                break;
-            case EVENT_TIME_STEP:
+                if (instance->GetBossState(DATA_EPOCH) == DONE)
+                    me->RemoveLootMode(LOOT_MODE_DEFAULT);
+            }
+
+            void JustEngagedWith(Unit* who) override
             {
-                // In each step, we charge to a random target that was previously hit by SPELL_TIME_STEP_DUMMY
-                // Once we run out of targets, we charge back to the tank, then stop
-                uint32 nTargets = _stepTargets.size();
-                Unit* target = nullptr;
-                while (nTargets > _stepTargetIndex)
+                BossAI::JustEngagedWith(who);
+
+                _stepTargetIndex = 0;
+                _stepTargets.clear();
+                events.ScheduleEvent(EVENT_WOUNDING_STRIKE, Seconds(4), Seconds(6));
+                events.ScheduleEvent(EVENT_CURSE_OF_EXERTION, Seconds(10), Seconds(17));
+                events.ScheduleEvent(EVENT_TIME_WARP, Seconds(25));
+                if (IsHeroic())
+                    events.ScheduleEvent(EVENT_TIME_STOP, Seconds(15));
+            }
+
+            void ExecuteEvent(uint32 eventId) override
+            {
+                switch (eventId)
                 {
-                    uint32 selected = urand(_stepTargetIndex, nTargets - 1);
-                    if (_stepTargetIndex != selected)
-                        std::swap(_stepTargets[_stepTargetIndex], _stepTargets[selected]);
-                    if ((target = ObjectAccessor::GetUnit(*me, _stepTargets[_stepTargetIndex++])))
+                    case EVENT_CURSE_OF_EXERTION:
+                        if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, 100.0f, true))
+                            DoCast(target, SPELL_CURSE_OF_EXERTION);
+                        events.ScheduleEvent(EVENT_CURSE_OF_EXERTION, 9300);
+                        break;
+                    case EVENT_TIME_WARP:
+                        Talk(SAY_TIME_WARP);
+                        DoCastAOE(SPELL_TIME_WARP);
+                        DoCastAOE(SPELL_TIME_STEP_DUMMY);
+                        events.Repeat(Seconds(25));
+                        break;
+                    case EVENT_TIME_STOP:
+                        DoCastAOE(SPELL_TIME_STOP);
+                        events.Repeat(Seconds(25));
+                        break;
+                    case EVENT_WOUNDING_STRIKE:
+                        DoCastVictim(SPELL_WOUNDING_STRIKE);
+                        events.Repeat(Seconds(12), Seconds(18));
+                        break;
+                    case EVENT_TIME_STEP:
+                    {
+                        // In each step, we charge to a random target that was previously hit by SPELL_TIME_STEP_DUMMY
+                        // Once we run out of targets, we charge back to the tank, then stop
+                        uint32 nTargets = _stepTargets.size();
+                        Unit* target = nullptr;
+                        while (nTargets > _stepTargetIndex)
+                        {
+                            uint32 selected = urand(_stepTargetIndex, nTargets - 1);
+                            if (_stepTargetIndex != selected)
+                                std::swap(_stepTargets[_stepTargetIndex], _stepTargets[selected]);
+                            if ((target = ObjectAccessor::GetUnit(*me, _stepTargets[_stepTargetIndex++])))
+                                break;
+                        }
+                        if (target)
+                            events.Repeat(Milliseconds(500));
+                        else
+                            target = me->GetVictim();
+
+                        if (target)
+                            DoCast(target, SPELL_TIME_STEP_CHARGE, true);
+                        break;
+                    }
+                    default:
                         break;
                 }
-                if (target)
-                    events.Repeat(Milliseconds(500));
-                else
-                    target = me->GetVictim();
-
-                if (target)
-                    DoCast(target, SPELL_TIME_STEP_CHARGE, true);
-                break;
             }
-            default:
-                break;
-            }
-        }
 
-        void SpellHitTarget(Unit* target, SpellInfo const* info) override
-        {
-            if (info->Id == SPELL_TIME_STEP_DUMMY && me->IsHostileTo(target))
+            void SpellHitTarget(Unit* target, SpellInfo const* info) override
             {
-                _stepTargets.push_back(target->GetGUID());
-                events.RescheduleEvent(EVENT_TIME_STEP, Milliseconds(500));
+                if (info->Id == SPELL_TIME_STEP_DUMMY && me->IsHostileTo(target))
+                {
+                    _stepTargets.push_back(target->GetGUID());
+                    events.RescheduleEvent(EVENT_TIME_STEP, Milliseconds(500));
+                }
             }
-        }
 
-        void JustDied(Unit* /*killer*/) override
+            void JustDied(Unit* /*killer*/) override
+            {
+                _JustDied();
+            }
+
+            void KilledUnit(Unit* victim) override
+            {
+                if (victim->GetTypeId() == TYPEID_PLAYER)
+                    Talk(SAY_SLAY);
+            }
+
+        private:
+            uint32 _stepTargetIndex;
+            std::vector<ObjectGuid> _stepTargets;
+        };
+
+        CreatureAI* GetAI(Creature* creature) const override
         {
-            Talk(SAY_DEATH);
-            _JustDied();
+            return GetCullingOfStratholmeAI<boss_epochAI>(creature);
         }
-
-        void KilledUnit(Unit* victim) override
-        {
-            if (victim->GetTypeId() == TYPEID_PLAYER)
-                Talk(SAY_SLAY);
-        }
-
-        uint32 _stepTargetIndex;
-        std::vector<ObjectGuid> _stepTargets;
-    };
-
-    CreatureAI* GetAI(Creature* creature) const override
-    {
-        return GetCullingOfStratholmeAI<boss_epochAI>(creature);
-    }
 };
 
 void AddSC_boss_epoch()

@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2008-2019 TrinityCore <https://www.trinitycore.org/>
- * Copyright (C) 2005-2009 MaNGOS <http://getmangos.com/>
+ * This file is part of the TrinityCore Project. See AUTHORS file for Copyright information
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -986,8 +985,8 @@ private:
 
 struct TSpellSummary
 {
-    uint8 Targets;                                          // set of enum SelectTarget
-    uint8 Effects;                                          // set of enum SelectEffect
+    uint8 Targets; // set of enum SelectTarget
+    uint8 Effects; // set of enum SelectEffect
 } *SpellSummary;
 
 ScriptObject::ScriptObject(char const* name) : _name(name)
@@ -1001,7 +1000,7 @@ ScriptObject::~ScriptObject()
 }
 
 ScriptMgr::ScriptMgr()
-  : _scriptCount(0), _script_loader_callback(nullptr)
+    : _scriptCount(0), _script_loader_callback(nullptr)
 {
 }
 
@@ -1457,7 +1456,6 @@ void ScriptMgr::OnPlayerEnterMap(Map* map, Player* player)
     ASSERT(map);
     ASSERT(player);
 
-    FOREACH_SCRIPT(AllMapScript)->OnPlayerEnterAll(map, player);
     FOREACH_SCRIPT(PlayerScript)->OnMapChanged(player);
 
     SCR_MAP_BGN(WorldMapScript, map, itr, end, entry, IsWorldMap);
@@ -1478,7 +1476,6 @@ void ScriptMgr::OnPlayerLeaveMap(Map* map, Player* player)
     ASSERT(map);
     ASSERT(player);
 
-    FOREACH_SCRIPT(AllMapScript)->OnPlayerLeaveAll(map, player);
     SCR_MAP_BGN(WorldMapScript, map, itr, end, entry, IsWorldMap);
         itr->second->OnPlayerLeave(map, player);
     SCR_MAP_END;
@@ -1592,26 +1589,6 @@ bool ScriptMgr::OnAreaTrigger(Player* player, AreaTriggerEntry const* trigger)
 
     GET_SCRIPT_RET(AreaTriggerScript, sObjectMgr->GetAreaTriggerScriptId(trigger->id), tmpscript, false);
     return tmpscript->OnTrigger(player, trigger);
-}
-
-void ScriptMgr::OnCreatureUpdate(Creature* creature, uint32 diff)
-{
-    ASSERT(creature);
-
-    FOREACH_SCRIPT(AllCreatureScript)->OnAllCreatureUpdate(creature, diff);
-
-    GET_SCRIPT(CreatureScript, creature->GetScriptId(), tmpscript);
-    tmpscript->OnUpdate(creature, diff);
-}
-
-void ScriptMgr::Creature_SelectLevel(const CreatureTemplate *cinfo, Creature* creature)
-{
-    FOREACH_SCRIPT(AllCreatureScript)->Creature_SelectLevel(cinfo, creature);
-}
-
-void ScriptMgr::SetInitialWorldSettings()
-{
-    FOREACH_SCRIPT(WorldScript)->SetInitialWorldSettings();
 }
 
 Battleground* ScriptMgr::CreateBattleground(BattlegroundTypeId /*typeId*/)
@@ -1827,20 +1804,6 @@ bool ScriptMgr::OnCriteriaCheck(uint32 scriptId, Player* source, Unit* target)
     return tmpscript->OnCheck(source, target);
 }
 
-//Called From Unit::DealDamage
-uint32 ScriptMgr::DealDamage(Unit* AttackerUnit, Unit *pVictim, uint32 damage, DamageEffectType damagetype)
-{
-    FOR_SCRIPTS_RET(UnitScript, itr, end, damage)
-        damage = itr->second->DealDamage(AttackerUnit, pVictim, damage, damagetype);
-    return damage;
-}
-
-//Called From Unit::DealHeal
-void ScriptMgr::ModHeal(Unit* healer, Unit* reciever, uint32& gain)
-{
-    FOREACH_SCRIPT(UnitScript)->ModHeal(healer, reciever, gain);
-}
-
 // Player
 void ScriptMgr::OnPVPKill(Player* killer, Player* killed)
 {
@@ -1997,6 +1960,16 @@ void ScriptMgr::OnPlayerRepop(Player* player)
     FOREACH_SCRIPT(PlayerScript)->OnPlayerRepop(player);
 }
 
+void ScriptMgr::OnQuestObjectiveProgress(Player* player, Quest const* quest, uint32 objectiveIndex, uint16 progress)
+{
+    FOREACH_SCRIPT(PlayerScript)->OnQuestObjectiveProgress(player, quest, objectiveIndex, progress);
+}
+
+void ScriptMgr::OnMovieComplete(Player* player, uint32 movieId)
+{
+    FOREACH_SCRIPT(PlayerScript)->OnMovieComplete(player, movieId);
+}
+
 // Account
 void ScriptMgr::OnAccountLogin(uint32 accountId)
 {
@@ -2142,16 +2115,10 @@ void ScriptMgr::ModifySpellDamageTaken(Unit* target, Unit* attacker, int32& dama
     FOREACH_SCRIPT(UnitScript)->ModifySpellDamageTaken(target, attacker, damage);
 }
 
-AllMapScript::AllMapScript(const char* name)
-    : ScriptObject(name)
+void ScriptMgr::ModifyVehiclePassengerExitPos(Unit* passenger, Vehicle* vehicle, Position& pos)
 {
-    ScriptRegistry<AllMapScript>::Instance()->AddScript(this);
-}
-
-AllCreatureScript::AllCreatureScript(const char* name)
-    : ScriptObject(name)
-{
-    ScriptRegistry<AllCreatureScript>::Instance()->AddScript(this);
+    FOREACH_SCRIPT(UnitScript)->ModifyVehiclePassengerExitPos(passenger, vehicle, pos);
+    FOREACH_SCRIPT(CreatureScript)->ModifyVehiclePassengerExitPos(passenger, vehicle, pos);
 }
 
 SpellScriptLoader::SpellScriptLoader(char const* name)
@@ -2348,12 +2315,10 @@ template class TC_GAME_API ScriptRegistry<SpellScriptLoader>;
 template class TC_GAME_API ScriptRegistry<ServerScript>;
 template class TC_GAME_API ScriptRegistry<WorldScript>;
 template class TC_GAME_API ScriptRegistry<FormulaScript>;
-template class TC_GAME_API ScriptRegistry<AllMapScript>;
 template class TC_GAME_API ScriptRegistry<WorldMapScript>;
 template class TC_GAME_API ScriptRegistry<InstanceMapScript>;
 template class TC_GAME_API ScriptRegistry<BattlegroundMapScript>;
 template class TC_GAME_API ScriptRegistry<ItemScript>;
-template class TC_GAME_API ScriptRegistry<AllCreatureScript>;
 template class TC_GAME_API ScriptRegistry<CreatureScript>;
 template class TC_GAME_API ScriptRegistry<GameObjectScript>;
 template class TC_GAME_API ScriptRegistry<AreaTriggerScript>;
