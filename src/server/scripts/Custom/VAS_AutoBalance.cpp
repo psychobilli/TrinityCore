@@ -447,7 +447,7 @@ public:
         }
 
         CreatureTemplate const *creatureTemplate = creature->GetCreatureTemplate();
-        CreatureBaseStats const* creatureStats = sObjectMgr->GetCreatureBaseStats(creature->getLevel(), creatureTemplate->unit_class);
+        CreatureBaseStats const* creatureStats = sObjectMgr->GetCreatureBaseStats(creature->GetLevel(), creatureTemplate->unit_class);
 
         float damageMultiplier = 1.0f;
         float healthMultiplier = 1.0f;

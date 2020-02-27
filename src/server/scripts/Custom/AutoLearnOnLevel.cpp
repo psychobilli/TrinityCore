@@ -25,8 +25,8 @@ public:
 
     void OnLevelChanged(Player* player, uint8 oldLevel) override
     {
-        uint8 currLevel = player->getLevel();
-        std::list<AutoLearnSpellInfo> infoList = GetNpcSpellListing(player->getClass(), player->getRace(), oldLevel, currLevel);
+        uint8 currLevel = player->GetLevel();
+        std::list<AutoLearnSpellInfo> infoList = GetNpcSpellListing(player->GetClass(), player->GetRace(), oldLevel, currLevel);
         std::list<AutoLearnSpellReqs> reqsList = GetRequiredSpells(infoList);
 
         for (uint32 level = oldLevel + 1; level <= currLevel; level++) {

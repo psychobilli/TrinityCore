@@ -1591,6 +1591,26 @@ bool ScriptMgr::OnAreaTrigger(Player* player, AreaTriggerEntry const* trigger)
     return tmpscript->OnTrigger(player, trigger);
 }
 
+void ScriptMgr::OnCreatureUpdate(Creature* creature, uint32 diff)
+{
+    ASSERT(creature);
+
+    FOREACH_SCRIPT(AllCreatureScript)->OnAllCreatureUpdate(creature, diff);
+
+    GET_SCRIPT(CreatureScript, creature->GetScriptId(), tmpscript);
+    tmpscript->OnUpdate(creature, diff);
+}
+
+void ScriptMgr::Creature_SelectLevel(const CreatureTemplate *cinfo, Creature* creature)
+{
+    FOREACH_SCRIPT(AllCreatureScript)->Creature_SelectLevel(cinfo, creature);
+}
+
+void ScriptMgr::SetInitialWorldSettings()
+{
+    FOREACH_SCRIPT(WorldScript)->SetInitialWorldSettings();
+}
+
 Battleground* ScriptMgr::CreateBattleground(BattlegroundTypeId /*typeId*/)
 {
     /// @todo Implement script-side battlegrounds.
@@ -1802,6 +1822,12 @@ bool ScriptMgr::OnCriteriaCheck(uint32 scriptId, Player* source, Unit* target)
 
     GET_SCRIPT_RET(AchievementCriteriaScript, scriptId, tmpscript, false);
     return tmpscript->OnCheck(source, target);
+}
+
+//Called From Unit::DealHeal
+void ScriptMgr::ModHeal(Unit* healer, Unit* reciever, uint32& gain)
+{
+    FOREACH_SCRIPT(UnitScript)->ModHeal(healer, reciever, gain);
 }
 
 // Player
@@ -2113,6 +2139,18 @@ void ScriptMgr::ModifyMeleeDamage(Unit* target, Unit* attacker, uint32& damage)
 void ScriptMgr::ModifySpellDamageTaken(Unit* target, Unit* attacker, int32& damage)
 {
     FOREACH_SCRIPT(UnitScript)->ModifySpellDamageTaken(target, attacker, damage);
+}
+
+AllMapScript::AllMapScript(const char* name)
+    : ScriptObject(name)
+{
+    ScriptRegistry<AllMapScript>::Instance()->AddScript(this);
+}
+
+AllCreatureScript::AllCreatureScript(const char* name)
+    : ScriptObject(name)
+{
+    ScriptRegistry<AllCreatureScript>::Instance()->AddScript(this);
 }
 
 void ScriptMgr::ModifyVehiclePassengerExitPos(Unit* passenger, Vehicle* vehicle, Position& pos)
