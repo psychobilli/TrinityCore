@@ -558,19 +558,10 @@ class instance_culling_of_stratholme : public InstanceMapScript
                                         _waveSpawns.insert(spawn->GetGUID());
                                     break;
                                 default:
-                                    if (instance->GetSpawnMode() == DUNGEON_DIFFICULTY_HEROIC)
-                                    {
-                                        for (uint32 i = 0; i < MAX_SPAWNS_PER_WAVE; ++i)
-                                            if (uint32 entry = HeroicWaves[_waveCount - 1][i])
-                                                if (Creature* spawn = instance->SummonCreature(entry, spawnLocation.SpawnPoints[i]))
-                                                    _waveSpawns.insert(spawn->GetGUID());
-                                    }
-                                    else
-                                    {
-                                        for (uint32 i = 0; i <= 1; ++i)
-                                            if (Creature* spawn = instance->SummonCreature(NPC_DEVOURING_GHOUL, spawnLocation.SpawnPoints[i]))
+                                    for (uint32 i = 0; i < MAX_SPAWNS_PER_WAVE; ++i)
+                                        if (uint32 entry = HeroicWaves[_waveCount - 1][i])
+                                            if (Creature* spawn = instance->SummonCreature(entry, spawnLocation.SpawnPoints[i]))
                                                 _waveSpawns.insert(spawn->GetGUID());
-                                    }
                                     break;
                             }
 
