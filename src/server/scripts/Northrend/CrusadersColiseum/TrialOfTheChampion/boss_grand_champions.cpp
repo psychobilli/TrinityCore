@@ -1330,7 +1330,7 @@ public:
             events.ScheduleEvent(EVENT_EARTH_SHIELD, 5000);
             events.ScheduleEvent(EVENT_HEX_MENDING, 7000);
             boss_grand_championAI::JustEngagedWith(who);
-        };
+        }
 
         void EnterCombatMode(bool interrupt)
         {
@@ -1487,7 +1487,7 @@ class boss_hunter_toc5 : public CreatureScript
 public:
     boss_hunter_toc5() : CreatureScript("boss_hunter_toc5") { }
 
-        // Jaelyne Evensong && Zul'tore || Hunter
+    // Jaelyne Evensong && Zul'tore || Hunter
     struct boss_hunter_toc5AI : public boss_grand_championAI
     {
         boss_hunter_toc5AI(Creature* creature) : boss_grand_championAI(creature) { }
@@ -1571,15 +1571,15 @@ public:
     }
 };
 
-class boss_rouge_toc5 : public CreatureScript
+class boss_rogue_toc5 : public CreatureScript
 {
 public:
-    boss_rouge_toc5() : CreatureScript("boss_rouge_toc5") { }
+    boss_rogue_toc5() : CreatureScript("boss_rouge_toc5") { }
 
-    // Lana Stouthammer Evensong && Deathstalker Visceri || Rouge
-    struct boss_rouge_toc5AI : public boss_grand_championAI
+    // Lana Stouthammer Evensong && Deathstalker Visceri || Rogue
+    struct boss_rogue_toc5AI : public boss_grand_championAI
     {
-        boss_rouge_toc5AI(Creature* creature) : boss_grand_championAI(creature) { }
+        boss_rogue_toc5AI(Creature* creature) : boss_grand_championAI(creature) { }
 
         void Reset() override
         {
@@ -1644,7 +1644,7 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return GetTrialOfTheChampionAI<boss_rouge_toc5AI>(creature);
+        return GetTrialOfTheChampionAI<boss_rogue_toc5AI>(creature);
     }
 };
 
@@ -1795,7 +1795,7 @@ void AddSC_boss_grand_champions()
     new boss_mage_toc5();
     new boss_shaman_toc5();
     new boss_hunter_toc5();
-    new boss_rouge_toc5();
+    new boss_rogue_toc5();
     new spell_toc5_trample_aura();
     new spell_toc5_lightning_arrows();
     new achievement_victories_over_champion("achievement_victories_over_war_champion", CRITERIA_WARRIOR);

@@ -90,46 +90,10 @@ public:
             _argentSoldierDeaths = 0;
         }
 
-        uint32 m_auiEncounter[MAX_ENCOUNTER];
-
         uint32 teamInInstance;
-        uint16 uiMovementDone;
-        uint16 uiGrandChampionsDeaths;
-        uint8 uiArgentSoldierDeaths;
 
-        ObjectGuid uiAnnouncerGUID;
         ObjectGuid uiMainGateGUID;
-        ObjectGuid uiGrandChampionVehicle1GUID;
-        ObjectGuid uiGrandChampionVehicle2GUID;
-        ObjectGuid uiGrandChampionVehicle3GUID;
-        ObjectGuid uiGrandChampion1GUID;
-        ObjectGuid uiGrandChampion2GUID;
-        ObjectGuid uiGrandChampion3GUID;
         ObjectGuid uiChampionLootGUID;
-        ObjectGuid uiArgentChampionGUID;
-
-        GuidList VehicleList;
-
-        std::string str_data;
-
-        bool bDone;
-
-        bool IsEncounterInProgress() const override
-        {
-            for (uint8 i = 0; i < MAX_ENCOUNTER; ++i)
-            {
-                if (m_auiEncounter[i] == IN_PROGRESS)
-                    return true;
-            }
-
-            return false;
-        }
-
-        void OnPlayerEnter(Player* player) override
-        {
-            if (!teamInInstance)
-                teamInInstance = player->GetTeam();
-        }
 
         void OnCreatureCreate(Creature* creature) override
         {
@@ -222,20 +186,6 @@ public:
             }
 
             return entry;
-        }
-
-        void OnGameObjectCreate(GameObject* go) override
-        {
-            switch (go->GetEntry())
-            {
-                case GO_MAIN_GATE:
-                    uiMainGateGUID = go->GetGUID();
-                    break;
-                case GO_CHAMPIONS_LOOT:
-                case GO_CHAMPIONS_LOOT_H:
-                    uiChampionLootGUID = go->GetGUID();
-                    break;
-            }
         }
 
         void SetGrandChampionData(Creature* creature)
@@ -371,9 +321,6 @@ public:
                 default:
                     break;
             }
-
-            if (uiData == DONE)
-                SaveToDB();
         }
 
         uint32 GetData(uint32 uiData) const override
@@ -411,7 +358,7 @@ public:
                     break;
             }
 
-            return ObjectGuid::Empty;
+            return InstanceScript::GetGuidData(uiData);
         }
 
         void SetGuidData(uint32 uiType, ObjectGuid uiData) override
@@ -428,58 +375,6 @@ public:
             }
         }
 
-   /*     std::string GetSaveData() override
-        {
-            OUT_SAVE_INST_DATA;
-
-            std::ostringstream saveStream;
-
-            saveStream << "T C " << m_auiEncounter[0]
-                << ' ' << m_auiEncounter[1]
-                << ' ' << m_auiEncounter[2]
-                << ' ' << m_auiEncounter[3]
-                << ' ' << uiGrandChampionsDeaths
-                << ' ' << uiMovementDone;
-
-            str_data = saveStream.str();
-
-            OUT_SAVE_INST_DATA_COMPLETE;
-            return str_data;
-        }
-
-        void Load(char const* in) override
-        {
-            if (!in)
-            {
-                OUT_LOAD_INST_DATA_FAIL;
-                return;
-            }
-
-            OUT_LOAD_INST_DATA(in);
-
-            char dataHead1, dataHead2;
-            uint16 data0, data1, data2, data3, data4, data5;
-
-            std::istringstream loadStream(in);
-            loadStream >> dataHead1 >> dataHead2 >> data0 >> data1 >> data2 >> data3 >> data4 >> data5;
-
-            if (dataHead1 == 'T' && dataHead2 == 'C')
-            {
-                m_auiEncounter[0] = data0;
-                m_auiEncounter[1] = data1;
-                m_auiEncounter[2] = data2;
-                m_auiEncounter[3] = data3;
-
-                for (uint8 i = 0; i < MAX_ENCOUNTER; ++i)
-                    if (m_auiEncounter[i] == IN_PROGRESS)
-                        m_auiEncounter[i] = NOT_STARTED;
-
-                uiGrandChampionsDeaths = data4;
-                uiMovementDone = data5;
-            } else OUT_LOAD_INST_DATA_FAIL;
-
-            OUT_LOAD_INST_DATA_COMPLETE;
-        }*/
         private:
             ObjectGuid _grandChampionVehicleGUIDs[GrandChampionsCount];
             ObjectGuid _grandChampionGUIDs[GrandChampionsCount];
