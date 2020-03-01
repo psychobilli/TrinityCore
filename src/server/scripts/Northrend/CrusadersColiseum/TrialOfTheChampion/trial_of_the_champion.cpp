@@ -15,17 +15,6 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* ScriptData
-SDName: Trial Of the Champion
-SD%Complete:
-SDComment:
-SDCategory: trial_of_the_champion
-EndScriptData */
-
-/* ContentData
-npc_announcer_toc5
-EndContentData */
-
 #include "ScriptMgr.h"
 #include "GameObject.h"
 #include "InstanceScript.h"
@@ -107,7 +96,6 @@ enum Yells
     // Used by spectators (same id for every spectator)
     EMOTE_SPECTATOR_CHEER = 0
 };
-
 
 enum BossData
 {
@@ -312,6 +300,8 @@ public:
             uiSecondBoss = 0;
             uiThirdBoss = 0;
             uiArgentChampion = 0;
+
+            SetCombatMovement(false);
 
             me->SetReactState(REACT_PASSIVE);
             me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
