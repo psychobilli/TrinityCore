@@ -70,7 +70,8 @@ enum Entries
     SPELL_MALGANIS_KILL_CREDIT = 58630,
     SPELL_CHROMIE_3_TRANSFORM = 58986,
     GO_CHEST_NORMAL = 190663,
-    GO_CHEST_HEROIC = 193597
+    GO_CHEST_HEROIC = 193597,
+    CITY_EXIT_GATE = 191788
 };
 
 enum SplineChains
@@ -1495,6 +1496,8 @@ public:
                             chromie->CastSpell(chromie, SPELL_CHROMIE_3_TRANSFORM);
                             chromie->AI()->Talk(RP5_LINE_CHROMIE0);
                             chromie->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP | UNIT_NPC_FLAG_QUESTGIVER);
+                            if (GameObject* gate = chromie->FindNearestGameObject(CITY_EXIT_GATE, 100.0f))
+                                gate->SetGoState(GO_STATE_ACTIVE);
                         }
                     default:
                         break;
