@@ -8457,6 +8457,12 @@ void Unit::UpdateSpeed(UnitMoveType mtype)
                 main_speed_mod  = GetTotalAuraModifier(SPELL_AURA_MOD_INCREASE_FLIGHT_SPEED) + GetTotalAuraModifier(SPELL_AURA_MOD_INCREASE_VEHICLE_FLIGHT_SPEED);
 
             non_stack_bonus += GetMaxPositiveAuraModifier(SPELL_AURA_MOD_FLIGHT_SPEED_NOT_STACK) / 100.0f;
+            
+            if (GetTypeId() == TYPEID_PLAYER) {
+                Player* p = ToPlayer();
+                if (p->Has310Flyer(false, 0) && main_speed_mod > 200 && main_speed_mod < 310)
+                    main_speed_mod = 310;
+            }
 
             // Update speed for vehicle if available
             if (GetTypeId() == TYPEID_PLAYER && GetVehicle())
