@@ -4,7 +4,7 @@ SET @CGUID = 700300; -- creature GUIDs (4 creature);
 DELETE FROM `creature` WHERE `guid` BETWEEN @CGUID+00 AND @CGUID+03;
 
 -- Move additional Chromie spawns to DB
-INSERT INTO `creature` (`guid`,`id`,`map`,`spawnMask`,`phaseMask`,`position_x`,`position_y`,`position_z`,`orientation`,`spawntimesecs`,`spawndist`,`movementtype`) VALUES
+INSERT INTO `creature` (`guid`,`id`,`map`,`spawnMask`,`phaseMask`,`position_x`,`position_y`,`position_z`,`orientation`,`spawntimesecs`,`wander_distance`,`movementtype`) VALUES
 (@CGUID+00, 27915, 595, 3, 1, 1813.298, 1283.578, 142.3258, 3.878161, @DAY, 0, 0);
 
 -- Chromie AI
@@ -25,7 +25,7 @@ INSERT INTO `conditions` (`SourceTypeOrReferenceId`, `SourceGroup`, `SourceEntry
 -- Starting inn RP fluff
 DELETE FROM `areatrigger_scripts` WHERE `entry`=5291;
 INSERT INTO `areatrigger_scripts` (`entry`,`ScriptName`) VALUES (5291,"at_stratholme_inn_stairs_cot");
-UPDATE `creature` SET `movementtype`=0,`spawndist`=0 WHERE `id`=30571;
+UPDATE `creature` SET `movementtype`=0,`wander_distance`=0 WHERE `id`=30571;
 UPDATE `creature_addon` SET `bytes1`=0 WHERE `guid` IN (SELECT guid FROM `creature` WHERE `id`=30571);
 UPDATE `creature_template` SET `ScriptName`="",`AIName`="SmartAI" WHERE `entry`=30571;
 UPDATE `creature_template` SET `ScriptName`="npc_hearthsinger_forresten_cot",`AIName`="" WHERE `entry`=30551;
@@ -66,7 +66,7 @@ UPDATE `creature` SET `spawntimesecs`=@DAY WHERE `id`=27827;
 UPDATE `gameobject` SET `spawntimesecs`=@DAY WHERE `id`=190094;
 
 -- Grain Crate reaction fluff
-UPDATE `creature` SET `movementtype`=0,`spawndist`=0 WHERE `id` IN (27884,27885,27891,27892,27907);
+UPDATE `creature` SET `movementtype`=0,`wander_distance`=0 WHERE `id` IN (27884,27885,27891,27892,27907);
 -- Event #1:
 UPDATE `creature_template` SET `AIName`="",`ScriptName`="npc_jena_anderson" WHERE `entry`=27885;
 UPDATE `creature_template` SET `AIName`="",`ScriptName`="npc_martha_goslin" WHERE `entry`=27884;
@@ -253,7 +253,7 @@ SELECT @run_speed := `speed_run`, @heroic_entry := `difficulty_entry_1` FROM `cr
 UPDATE `creature_template` SET `speed_run` = @run_speed WHERE `entry` = @heroic_entry;
 
 -- Town Hall infinite spawns
-INSERT INTO `creature` (`guid`,`id`,`map`,`spawnMask`,`phaseMask`,`position_x`,`position_y`,`position_z`,`orientation`,`spawntimesecs`,`spawndist`,`movementtype`) VALUES
+INSERT INTO `creature` (`guid`,`id`,`map`,`spawnMask`,`phaseMask`,`position_x`,`position_y`,`position_z`,`orientation`,`spawntimesecs`,`wander_distance`,`movementtype`) VALUES
 (@CGUID+01, 28340, 595, 3, 1, 2398.715, 1207.334, 134.1223, 5.270895, @DAY, 0, 0),
 (@CGUID+02, 28340, 595, 3, 1, 2401.265, 1202.789, 134.1039, 1.466077, @DAY, 0, 0),
 (@CGUID+03, 28341, 595, 3, 1, 2402.654, 1205.786, 134.1223, 2.897247, @DAY, 0, 0);
