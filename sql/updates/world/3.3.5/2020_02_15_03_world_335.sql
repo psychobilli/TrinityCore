@@ -65,8 +65,20 @@ UPDATE `creature_template` SET `ScriptName`='generic_vehicleAI_toc5' WHERE `entr
 UPDATE `creature_template` SET `faction`=14, `npcflag`=16777216, `VehicleId`=529, `speed_walk`=2.5/2.5, `speed_run`=11.0/7.0, `unit_flags`=256, `unit_flags2`=0 WHERE `entry` IN (@ARGENT_WARHORSE_GC,@ARGENT_BATTLEWORG_GC);
 UPDATE `creature_template` SET `faction`=35, `npcflag`=16777216, `VehicleId`=486, `speed_walk`=2.5/2.5, `speed_run`=11.0/7.0, `unit_flags`=  0, `unit_flags2`=0 WHERE `entry` IN (@ARGENT_WARHORSE,@ARGENT_BATTLEWORG);
 
-UPDATE `creature_template` SET `Spell1`=0, `Spell2`=0, `Spell3`=0, `Spell4`=0 WHERE `entry` IN (@ARGENT_WARHORSE_GC, @ARGENT_BATTLEWORG_GC);
-UPDATE `creature_template` SET `Spell1`=68505, `Spell2`=62575, `Spell3`=68282, `Spell4`=62552 WHERE `entry` IN (@ARGENT_WARHORSE, @ARGENT_BATTLEWORG);
+UPDATE `creature_template_spell` SET `Spell`=0 WHERE `CreatureId` IN (@ARGENT_WARHORSE_GC, @ARGENT_BATTLEWORG_GC);
+UPDATE `creature_template_spell` SET `Spell`=68505 WHERE `CreatureId` IN (@ARGENT_WARHORSE, @ARGENT_BATTLEWORG) AND `Index` = 0;
+UPDATE `creature_template_spell` SET `Spell`=62575 WHERE `CreatureId` IN (@ARGENT_WARHORSE, @ARGENT_BATTLEWORG) AND `Index` = 1;
+UPDATE `creature_template_spell` SET `Spell`=68282 WHERE `CreatureId` IN (@ARGENT_WARHORSE, @ARGENT_BATTLEWORG) AND `Index` = 2;
+UPDATE `creature_template_spell` SET `Spell`=62552 WHERE `CreatureId` IN (@ARGENT_WARHORSE, @ARGENT_BATTLEWORG) AND `Index` = 3;
+
+INSERT INTO `creature_template_spell` (`CreatureId`, `Index`, `Spell`, `VerifiedBuild`) SELECT `entry`, 0, 68505 FROM `creature_template` WHERE `entry` IN (@ARGENT_WARHORSE, @ARGENT_BATTLEWORG)
+	AND NOT EXISTS (SELECT 1 FROM `creature_template_spell` WHERE `CreatureId` IN (@ARGENT_WARHORSE, @ARGENT_BATTLEWORG) AND `Index` = 0 AND `entry` = `CreatureId`);
+INSERT INTO `creature_template_spell` (`CreatureId`, `Index`, `Spell`, `VerifiedBuild`) SELECT `entry`, 1, 62575 FROM `creature_template` WHERE `entry` IN (@ARGENT_WARHORSE, @ARGENT_BATTLEWORG)
+	AND NOT EXISTS (SELECT 1 FROM `creature_template_spell` WHERE `CreatureId` IN (@ARGENT_WARHORSE, @ARGENT_BATTLEWORG) AND `Index` = 1 AND `entry` = `CreatureId`);
+INSERT INTO `creature_template_spell` (`CreatureId`, `Index`, `Spell`, `VerifiedBuild`) SELECT `entry`, 2, 68282 FROM `creature_template` WHERE `entry` IN (@ARGENT_WARHORSE, @ARGENT_BATTLEWORG)
+	AND NOT EXISTS (SELECT 1 FROM `creature_template_spell` WHERE `CreatureId` IN (@ARGENT_WARHORSE, @ARGENT_BATTLEWORG) AND `Index` = 2 AND `entry` = `CreatureId`);
+INSERT INTO `creature_template_spell` (`CreatureId`, `Index`, `Spell`, `VerifiedBuild`) SELECT `entry`, 3, 62552 FROM `creature_template` WHERE `entry` IN (@ARGENT_WARHORSE, @ARGENT_BATTLEWORG)
+	AND NOT EXISTS (SELECT 1 FROM `creature_template_spell` WHERE `CreatureId` IN (@ARGENT_WARHORSE, @ARGENT_BATTLEWORG) AND `Index` = 3 AND `entry` = `CreatureId`);
 
 DELETE FROM `npc_spellclick_spells` WHERE `npc_entry` IN (@ARGENT_WARHORSE_GC,@ARGENT_WARHORSE,@ARGENT_BATTLEWORG,@ARGENT_BATTLEWORG_GC);
 INSERT INTO `npc_spellclick_spells` (`npc_entry`,`spell_id`,`cast_flags`,`user_type`) VALUES
