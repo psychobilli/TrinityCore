@@ -421,17 +421,17 @@ public:
 
     bool DoCreatureUpdate(Creature* creature, Map* map, bool log) {
         if (CreatureInfo[creature->GetGUID()].instanceId != map->GetInstanceId()) {
-            if (log)
+           // if (log)
                // TC_LOG_DEBUG("creature.log", "VAS_Autobalance: CreatureId %u, name %s, update for new instanceid %u.", creature->GetEntry(), creature->GetName(), map->GetInstanceId());
             return true;
         }
         if (CreatureInfo[creature->GetGUID()].creatureId != creature->GetEntry()) {
-            if (log)
+           // if (log)
                // TC_LOG_DEBUG("creature.log", "VAS_Autobalance: CreatureId %u, name %s, update for altered creature_id %u to %u.", creature->GetEntry(), creature->GetName(), CreatureInfo[creature->GetGUID()].creatureId, creature->GetEntry());
             return true;
         }
         if (CreatureInfo[creature->GetGUID()].instancePlayerCount != (map->GetPlayersCountExceptGMs() + PlayerCountDifficultyOffset)) {
-            if (log)
+           // if (log)
                // TC_LOG_DEBUG("creature.log", "VAS_Autobalance: CreatureId %u, name %s, update for altered player count.", creature->GetEntry(), creature->GetName());
             return true;
         }
