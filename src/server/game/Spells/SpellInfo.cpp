@@ -2270,6 +2270,9 @@ void SpellInfo::_LoadSpellDiminishInfo()
                 // Screams of the Dead (King Ymiron)
                 else if (Id == 51750)
                     return DIMINISHING_NONE;
+                // Crystallize (Keristrasza heroic)
+                else if (Id == 48179)
+                    return DIMINISHING_NONE;
                 break;
             }
             // Event spells
@@ -3412,6 +3415,7 @@ bool _isPositiveEffectImpl(SpellInfo const* spellInfo, uint8 effIndex, std::unor
                 case 61716: // Rabbit Costume
                 case 61734: // Noblegarden Bunny
                 case 62344: // Fists of Stone
+                case 50344: // Dream Funnel
                 case 61819: // Manabonked! (item)
                 case 61834: // Manabonked! (minigob)
                     return true;
