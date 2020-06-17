@@ -1015,7 +1015,7 @@ namespace MMAP
         config.walkableHeight = m_bigBaseUnit ? 3 : 6;
         // a value >= 3|6 allows npcs to walk over some fences
         // a value >= 4|8 allows npcs to walk over all fences
-        config.walkableClimb = m_bigBaseUnit ? 4 : 8;
+        config.walkableClimb = m_bigBaseUnit ? 3 : 6;
         config.minRegionArea = rcSqr(60);
         config.mergeRegionArea = rcSqr(50);
         config.maxSimplificationError = 1.8f;           // eliminates most jagged edges (tiny polygons)
@@ -1026,7 +1026,13 @@ namespace MMAP
         {
             // Blade's Edge Arena
             case 562:
+                // This allows to walk on the ropes to the pillars
                 config.walkableRadius = 0;
+                break;
+            // Blackfathom Deeps
+            case 48:
+                // Reduce the chance to have underground levels
+                config.ch *= 2;
                 break;
             default:
                 break;
