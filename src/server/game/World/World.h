@@ -23,10 +23,10 @@
 #define __WORLD_H
 
 #include "Common.h"
+#include "AsyncCallbackProcessor.h"
 #include "DatabaseEnvFwd.h"
 #include "LockedQueue.h"
 #include "ObjectGuid.h"
-#include "QueryCallbackProcessor.h"
 #include "SharedDefines.h"
 #include "Timer.h"
 
@@ -180,6 +180,8 @@ enum WorldBoolConfigs
     CONFIG_GAIN_HONOR_GUARD,
     CONFIG_GAIN_HONOR_ELITE,
     CONFIG_FAST_FISHING,
+    CONFIG_REGEN_HP_CANNOT_REACH_TARGET_IN_RAID,
+
     BOOL_CONFIG_VALUE_COUNT
 };
 
