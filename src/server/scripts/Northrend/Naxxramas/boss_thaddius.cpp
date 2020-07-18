@@ -402,6 +402,7 @@ struct boss_thaddius : public BossAI
                         break;
                     case EVENT_ENABLE_BALL_LIGHTNING:
                         ballLightningUnlocked = true;
+                        break;
                     case EVENT_ENGAGE:
                         me->SetReactState(REACT_AGGRESSIVE);
                         break;
@@ -442,7 +443,7 @@ struct boss_thaddius : public BossAI
                     DoMeleeAttackIfReady();
                 }
                 else if (ballLightningUnlocked)
-                    if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM))
+                    if (Unit* target = SelectTarget(SelectTargetMethod::Random))
                         DoCast(target, SPELL_BALL_LIGHTNING);
             }
         }
@@ -616,7 +617,7 @@ public:
                         creatureCaster->AI()->Talk(EMOTE_TESLA_LINK_BREAKS);
                         me->RemoveAura(SPELL_STALAGG_CHAIN_VISUAL);
                     }
-                    if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM))
+                    if (Unit* target = SelectTarget(SelectTargetMethod::Random))
                     {
                         creatureCaster->CastStop(SPELL_TESLA_SHOCK);
                         creatureCaster->CastSpell(target, SPELL_TESLA_SHOCK,true);
@@ -867,7 +868,7 @@ public:
                         creatureCaster->AI()->Talk(EMOTE_TESLA_LINK_BREAKS);
                         me->RemoveAura(SPELL_STALAGG_CHAIN_VISUAL);
                     }
-                    if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0))
+                    if (Unit* target = SelectTarget(SelectTargetMethod::Random, 0))
                     {
                         creatureCaster->CastStop(SPELL_TESLA_SHOCK);
                         creatureCaster->CastSpell(target, SPELL_TESLA_SHOCK,true);
