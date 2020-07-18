@@ -174,7 +174,7 @@ public:
         void JustSummoned(Creature* summoned) override
         {
             DoZoneInCombat(summoned);
-            if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0))
+            if (Unit* target = SelectTarget(SelectTargetMethod::Random, 0))
                 summoned->AI()->AttackStart(target);
 
             switch (summoned->GetEntry())
@@ -237,7 +237,7 @@ public:
                         // tank selection based on phase one. If tank is not there i take nearest one
                         if (Unit* tank = ObjectAccessor::GetUnit(*me, tankGUID))
                             me->GetMotionMaster()->MoveChase(tank);
-                        else if (Unit* newtarget = SelectTarget(SELECT_TARGET_MINDISTANCE, 0))
+                        else if (Unit* newtarget = SelectTarget(SelectTargetMethod::MinDistance, 0))
                             me->GetMotionMaster()->MoveChase(newtarget);
                         events.ScheduleEvent(EVENT_BELLOWING_ROAR, 5s);
                         events.ScheduleEvent(EVENT_FLAME_BREATH, 10s, 20s);
@@ -257,8 +257,8 @@ public:
                         Talk(SAY_PHASE_2_TRANS);
                         instance->SetData(DATA_ONYXIA_PHASE, Phase);
                         events.ScheduleEvent(EVENT_WHELP_SPAWN, 5s);
-                        events.ScheduleEvent(EVENT_LAIR_GUARD, 15000);
-                        events.ScheduleEvent(EVENT_DEEP_BREATH, 75000);
+                        events.ScheduleEvent(EVENT_LAIR_GUARD, 15s);
+                        events.ScheduleEvent(EVENT_DEEP_BREATH, 75s);
                         events.ScheduleEvent(EVENT_MOVEMENT, 10s);
                         events.ScheduleEvent(EVENT_FIREBALL, 18s);
                         break;
@@ -427,7 +427,7 @@ public:
                                 Talk(EMOTE_BREATH);
                                 if (PointData) /// @todo: In what cases is this null? What should we do?
                                     DoCast(me, PointData->SpellId);
-                                events.ScheduleEvent(EVENT_DEEP_BREATH, 75000);
+                                events.ScheduleEvent(EVENT_DEEP_BREATH, 75s);
                             }
                             else
                                 events.ScheduleEvent(EVENT_DEEP_BREATH, 1s);
@@ -443,7 +443,7 @@ public:
 
                                 me->GetMotionMaster()->MovePoint(PointData->LocId, PointData->fX, PointData->fY, PointData->fZ);
                                 IsMoving = true;
-                                events.ScheduleEvent(EVENT_MOVEMENT, 25000);
+                                events.ScheduleEvent(EVENT_MOVEMENT, 25s);
                             }
                             else
                                 events.ScheduleEvent(EVENT_MOVEMENT, 500ms);
@@ -451,7 +451,7 @@ public:
                         case EVENT_FIREBALL:         // Phase PHASE_BREATH
                             if (!IsMoving)
                             {
-                                if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0))
+                                if (Unit* target = SelectTarget(SelectTargetMethod::Random, 0))
                                     DoCast(target, SPELL_FIREBALL);
                                 events.ScheduleEvent(EVENT_FIREBALL, 8s);
                             }

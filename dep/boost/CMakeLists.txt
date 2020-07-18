@@ -38,6 +38,11 @@ if(WIN32)
   set(Boost_USE_STATIC_RUNTIME     OFF)
 endif()
 
+if (CMAKE_VERSION VERSION_LESS "3.16.0")
+  # boost's own cmake file adds extra compile definitions that cotire fails to pick up
+  set(Boost_NO_BOOST_CMAKE ON)
+endif()
+
 include (CheckCXXSourceCompiles)
 
 if (WIN32)
@@ -77,10 +82,6 @@ target_compile_definitions(boost
   INTERFACE
     -DBOOST_DATE_TIME_NO_LIB
     -DBOOST_REGEX_NO_LIB
-    -DBOOST_CHRONO_NO_LIB
-    # Due to MSVC linking error boost::none" already defined in scripts_...
-    # May be removed when the requirement is raised to boost 1.61 on windows.
-    -DBOOST_OPTIONAL_USE_OLD_DEFINITION_OF_NONE
     -DBOOST_CHRONO_NO_LIB
     -DBOOST_SERIALIZATION_NO_LIB
     -DBOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE
