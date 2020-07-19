@@ -366,7 +366,7 @@ public:
             if (me->HasUnitState(UNIT_STATE_CASTING))
                 return;
 
-            Milliseconds time = 0s;
+            Milliseconds time = (Milliseconds) 0;
             while (uint32 eventId = events.ExecuteEvent())
             {
                 switch (eventId)
@@ -887,11 +887,12 @@ public:
 
         void JustEngagedWith(Unit* /*who*/) override
         {
+            Milliseconds time = (Milliseconds) 0;
             switch (me->GetEntry())
             {
             case NPC_ARGENT_LIGHWIELDER:
                 _events.ScheduleEvent(EVENT_BLAZING_LIGHT, 10s);
-                Milliseconds time = (Milliseconds)urand(12000, 15000);
+                time = (Milliseconds)urand(12000, 15000);
                 _events.ScheduleEvent(EVENT_CLEAVE, time);
                 if (IsHeroic())
                     _events.ScheduleEvent(EVENT_UNBALANCING_STRIKE, 8s);

@@ -219,6 +219,7 @@ public:
 
             while (uint32 eventId = events.ExecuteEvent())
             {
+                Milliseconds time = (Milliseconds) 0;
                 switch (eventId)
                 {
                 case EVENT_CLAW:
@@ -229,7 +230,7 @@ public:
                         AddThreat(target, 10.0f);
                         me->AI()->AttackStart(target);
                     }
-                    Milliseconds time = (Milliseconds) urand(12000, 15000);
+                    time = (Milliseconds) urand(12000, 15000);
                     events.ScheduleEvent(EVENT_CLAW, time);
                     break;
                 case EVENT_LEAP:
@@ -237,7 +238,7 @@ public:
                     {
                         if (Unit* target = SelectTarget(SelectTargetMethod::Random, 1, 30.0f, true))
                             DoCast(target, SPELL_LEAP);
-                        Milliseconds time = (Milliseconds)urand(8000, 10000);
+                        time = (Milliseconds)urand(8000, 10000);
                         events.ScheduleEvent(EVENT_LEAP, time);
                     }
                     break;
