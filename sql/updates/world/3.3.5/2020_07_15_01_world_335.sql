@@ -65,8 +65,24 @@ UPDATE `creature_template` SET `ScriptName`='generic_vehicleAI_toc5' WHERE `entr
 UPDATE `creature_template` SET `faction`=14, `npcflag`=16777216, `VehicleId`=529, `speed_walk`=2.5/2.5, `speed_run`=11.0/7.0, `unit_flags`=256, `unit_flags2`=0 WHERE `entry` IN (@ARGENT_WARHORSE_GC,@ARGENT_BATTLEWORG_GC);
 UPDATE `creature_template` SET `faction`=35, `npcflag`=16777216, `VehicleId`=486, `speed_walk`=2.5/2.5, `speed_run`=11.0/7.0, `unit_flags`=  0, `unit_flags2`=0 WHERE `entry` IN (@ARGENT_WARHORSE,@ARGENT_BATTLEWORG);
 
-UPDATE `creature_template` SET `Spell1`=0, `Spell2`=0, `Spell3`=0, `Spell4`=0 WHERE `entry` IN (@ARGENT_WARHORSE_GC, @ARGENT_BATTLEWORG_GC);
-UPDATE `creature_template` SET `Spell1`=68505, `Spell2`=62575, `Spell3`=68282, `Spell4`=62552 WHERE `entry` IN (@ARGENT_WARHORSE, @ARGENT_BATTLEWORG);
+DELETE FROM `creature_template_spell` WHERE `CreatureID` IN (@ARGENT_WARHORSE_GC, @ARGENT_BATTLEWORG_GC, @ARGENT_WARHORSE, @ARGENT_BATTLEWORG) AND `Index` IN (0,1,2,3);
+INSERT INTO `creature_template_spell` (`CreatureID`, `Index`, `Spell`, `VerifiedBuild`) VALUES
+(@ARGENT_WARHORSE_GC, 0, 0, null),
+(@ARGENT_WARHORSE_GC, 1, 0, null),
+(@ARGENT_WARHORSE_GC, 2, 0, null),
+(@ARGENT_WARHORSE_GC, 3, 0, null),
+(@ARGENT_BATTLEWORG_GC, 0, 0, null),
+(@ARGENT_BATTLEWORG_GC, 1, 0, null),
+(@ARGENT_BATTLEWORG_GC, 2, 0, null),
+(@ARGENT_BATTLEWORG_GC, 3, 0, null),
+(@ARGENT_WARHORSE, 0, 68505, null),
+(@ARGENT_WARHORSE, 1, 62575, null),
+(@ARGENT_WARHORSE, 2, 68282, null),
+(@ARGENT_WARHORSE, 3, 62552, null),
+(@ARGENT_BATTLEWORG, 0, 68505, null),
+(@ARGENT_BATTLEWORG, 1, 62575, null),
+(@ARGENT_BATTLEWORG, 2, 68282, null),
+(@ARGENT_BATTLEWORG, 3, 62552, null);
 
 DELETE FROM `npc_spellclick_spells` WHERE `npc_entry` IN (@ARGENT_WARHORSE_GC,@ARGENT_WARHORSE,@ARGENT_BATTLEWORG,@ARGENT_BATTLEWORG_GC);
 INSERT INTO `npc_spellclick_spells` (`npc_entry`,`spell_id`,`cast_flags`,`user_type`) VALUES
@@ -405,8 +421,8 @@ SET @RISEN_CHAMP_H  := 35717;
 
 -- The Black Knight's vehicle must have flight inhabit type
 -- UPDATE `creature_template` SET `InhabitType`=7 WHERE `entry`=@KNIGHT_VEHICLE;
-delete from creature_template_movement where `CreatureId` = @KNIGHT_VEHICLE;
-insert into creature_template_movement (`CreatureId`,`Ground`,`Swim`,`Flight`,`Rooted`) VALUES 
+delete from `creature_template_movement` where `CreatureId` = @KNIGHT_VEHICLE;
+insert into `creature_template_movement` (`CreatureId`,`Ground`,`Swim`,`Flight`,`Rooted`) VALUES 
 (@KNIGHT_VEHICLE, 0, 0, 2, 0);
 
 -- Risen Champion is missing scriptname
