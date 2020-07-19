@@ -58,9 +58,9 @@ static Wave RiftWaves[]=
 {
     { RIFT_BOSS,             0s },
     { NPC_CRONO_LORD_DEJA,   0s },
-    { RIFT_BOSS,           120s },
-    { NPC_TEMPORUS,        140s },
-    { RIFT_BOSS,           120s },
+    { RIFT_BOSS,             0s },
+    { NPC_TEMPORUS,          0s },
+    { RIFT_BOSS,             0s },
     { NPC_AEONUS,            0s }
 };
 
@@ -227,9 +227,9 @@ public:
                 if (data == SPECIAL)
                 {
                     if (mRiftPortalCount == 6 || mRiftPortalCount == 12)
-                        ScheduleEventNextPortal(180000);
+                        ScheduleEventNextPortal(180s);
                     else
-                        ScheduleEventNextPortal(60000);
+                        ScheduleEventNextPortal(60s);
                 }
                 else
                     m_auiEncounter[1] = data;
@@ -335,7 +335,7 @@ public:
             {
                 ++mRiftPortalCount;
                 DoUpdateWorldState(WORLD_STATE_BM_RIFT, mRiftPortalCount);
-                if (mRiftPortalCount < 18)
+                if (mRiftPortalCount <= 18)
                     DoSpawnPortal();
                 ScheduleEventNextPortal(RiftWaves[GetRiftWaveId()].NextPortalTime);
             }

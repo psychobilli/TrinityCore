@@ -18,6 +18,7 @@
 #include "ScriptMgr.h"
 #include "GameObject.h"
 #include "InstanceScript.h"
+#include "Log.h"
 #include "Map.h"
 #include "MotionMaster.h"
 #include "ObjectAccessor.h"
@@ -332,18 +333,18 @@ public:
         void NextStep(uint32 uiTimerStep, uint32 currentEvent, bool bNextStep = true, uint8 uiPhaseStep = 0)
         {
             if (bNextStep)
-                events.ScheduleEvent(currentEvent + 1, uiTimerStep);
+                events.ScheduleEvent(currentEvent + 1, (Milliseconds) uiTimerStep);
             else
             {
                 if (uiPhaseStep > 0)
-                    events.ScheduleEvent(uiPhaseStep, uiTimerStep);
+                    events.ScheduleEvent(uiPhaseStep, (Milliseconds) uiTimerStep);
             }
         }
 
         void Reset() override
         {
             events.Reset();
-            events.ScheduleEvent(EVENT_CHEER_RND, 120000);
+            events.ScheduleEvent(EVENT_CHEER_RND, 120s);
         }
 
         void SetData(uint32 uiType, uint32 uiData) override
@@ -358,6 +359,7 @@ public:
                     break;
                 case DATA_LESSER_CHAMPIONS_PREPARE:
                 {
+                    TC_LOG_DEBUG("scripts", "Trial of the Champion: Preparing Lesser Champions.");
                     // Moving lesser champions to right position
                     uint32 TeamInInstance = instance->GetData(DATA_TEAM_IN_INSTANCE);
                     GuidList* TempList = nullptr;
@@ -399,6 +401,7 @@ public:
                 }
                 case DATA_LESSER_CHAMPIONS_DEFEATED:
                 {
+                    TC_LOG_DEBUG("scripts", "Trial of the Champion: Lesser Champion defeated.");
                     ++uiLesserChampions;
                     GuidList TempList;
                     if (uiLesserChampions == 3 || uiLesserChampions == 6)
@@ -423,18 +426,23 @@ public:
                     break;
                 }
                 case DATA_GRAND_CHAMPIONS_DONE:
+                    TC_LOG_DEBUG("scripts", "Trial of the Champion: Grand Champions defeated.");
                     NextStep(3000, 0, false, EVENT_CHAT_8);
                     break;
                 case DATA_ARGENT_CHAMPION_PREPARE:
+                    TC_LOG_DEBUG("scripts", "Trial of the Champion: Prepare Argent Champion.");
                     NextStep(500, 0, false, EVENT_GO_TO_ARGENT_BOSS);
                     break;
                 case DATA_BLACK_KNIGHT_PREPARE:
+                    TC_LOG_DEBUG("scripts", "Trial of the Champion: Prepare The Black Knight.");
                     NextStep(2000, 0, false, EVENT_CHAT_15);
                     break;
                 case DATA_BLACK_KNIGHT_PRECAST:
+                    TC_LOG_DEBUG("scripts", "Trial of the Champion: The Black Knight Precast.");
                     NextStep(500, 0, false, EVENT_FACING_2);
                     break;
                 case DATA_BLACK_KNIGHT_DONE:
+                    TC_LOG_DEBUG("scripts", "Trial of the Champion: The Black Knight defeated.");
                     NextStep(7000, 0, false, EVENT_CHAT_20);
                     break;
                 default:
@@ -796,7 +804,7 @@ public:
                             }
                         }
                     }
-                    events.ScheduleEvent(EVENT_CHEER_RND, 120000);
+                    events.ScheduleEvent(EVENT_CHEER_RND, 120s);
                     break;
                     // Phases below happen in Grand Champions encounter
                 case EVENT_INTRODUCE:

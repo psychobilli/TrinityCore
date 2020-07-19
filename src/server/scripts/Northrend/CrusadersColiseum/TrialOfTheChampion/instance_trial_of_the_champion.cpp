@@ -228,6 +228,7 @@ public:
             case BOSS_ARGENT_CHALLENGE:
                 if (state == SPECIAL)
                 {
+                    TC_LOG_DEBUG("scripts", "Argent Challenge: Special State.");
                     if (Creature* champion = instance->GetCreature(_argentChampionGUID))
                     {
                         champion->InterruptNonMeleeSpells(true);
@@ -243,6 +244,7 @@ public:
                 }
                 else if (state == DONE)
                 {
+                    TC_LOG_DEBUG("scripts", "Argent Challenge: Completed.");
                     if (Creature* announcer = GetCreature(DATA_ANNOUNCER))
                     {
                         // On heroic mode we must bind players to the instance
@@ -274,6 +276,7 @@ public:
             case BOSS_BLACK_KNIGHT:
                 if (state == DONE)
                 {
+                    TC_LOG_DEBUG("scripts", "The Black Knight: Completed.");
                     if (Creature* announcer = GetCreature(DATA_ANNOUNCER))
                         announcer->AI()->SetData(DATA_BLACK_KNIGHT_DONE, 0);
                 }
