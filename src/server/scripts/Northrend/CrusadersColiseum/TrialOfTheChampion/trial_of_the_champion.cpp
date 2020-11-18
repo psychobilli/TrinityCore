@@ -773,7 +773,7 @@ public:
                 switch (eventId)
                 {
                 case EVENT_CHEER_RND:
-                    if (events.GetNextEventTime() == 0 && !me->HasFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP) && !me->isMoving() && !me->HasAura(66804))
+                    if (events.GetTimeUntilEvent(eventId) == 0s && !me->HasFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP) && !me->isMoving() && !me->HasAura(66804))
                     {
                         // Every 2 minutes a random player is being cheered by his/her race's spectators
                         // cheer should only occur during fights
@@ -1269,7 +1269,7 @@ public:
             UpdateVictim();
         }
 
-        bool GossipHello(Player* player) override
+        bool OnGossipHello(Player* player) override
         {
             InstanceScript* instance = me->GetInstanceScript();
             if (instance)
@@ -1329,7 +1329,7 @@ public:
             return true;
         }
 
-        bool GossipSelect(Player* player, uint32 /*menuId*/, uint32 gossipListId) override
+        bool OnGossipSelect(Player* player, uint32 /*menuId*/, uint32 gossipListId) override
         {
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             ClearGossipMenuFor(player);

@@ -193,7 +193,7 @@ public:
 
         void JustDied(Unit* /*killer*/) override
         {
-            me->DespawnOrUnsummon(1000);
+            me->DespawnOrUnsummon(1s);
         }
 
         void KilledUnit(Unit* who) override

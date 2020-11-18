@@ -218,7 +218,7 @@ public:
                         announcer->GetMotionMaster()->MovePoint(1, announcerWaitPos);
                         announcer->AI()->SetData(DATA_GRAND_CHAMPIONS_DONE, 0);
 
-                        DoRespawnGameObject(GetObjectGuid(DATA_CHAMPION_S_CACHE), 1 * DAY);
+                        DoRespawnGameObject(GetObjectGuid(DATA_CHAMPION_S_CACHE), Seconds(1) * DAY);
                         if (GameObject* cache = GetGameObject(DATA_CHAMPION_S_CACHE))
                             cache->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_NOT_SELECTABLE);
                     }
@@ -266,7 +266,7 @@ public:
                             break;
                         }
 
-                        DoRespawnGameObject(GetObjectGuid(dataType), 1 * DAY);
+                        DoRespawnGameObject(GetObjectGuid(dataType), Seconds(1) * DAY);
                         if (GameObject* cache = GetGameObject(dataType))
                             cache->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_NOT_SELECTABLE);
                     }
