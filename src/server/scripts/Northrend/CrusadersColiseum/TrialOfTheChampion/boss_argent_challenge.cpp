@@ -16,10 +16,16 @@
  */
 
 #include "Player.h"
+
 #include "ScriptMgr.h"
+#include "InstanceScript.h"
+#include "MotionMaster.h"
+#include "ObjectAccessor.h"
+#include "ScriptedEscortAI.h"
 #include "PassiveAI.h"
 #include "ScriptedCreature.h"
 #include "SpellScript.h"
+#include "TemporarySummon.h"
 #include "trial_of_the_champion.h"
 
 enum Yells

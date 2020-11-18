@@ -336,7 +336,7 @@ struct boss_sister_svalna : public BossAI
         _JustDied();
         Talk(SAY_SVALNA_DEATH);
 
-        uint64 delay = 1;
+        Milliseconds delay = 1ms;
         for (uint8 itr = 0; itr < 4; ++itr)
         {
             if (Creature* crusader = ObjectAccessor::GetCreature(*me, instance->GetGuidData(DATA_CAPTAIN_ARNATH + itr)))
@@ -344,7 +344,7 @@ struct boss_sister_svalna : public BossAI
                 if (crusader->IsAlive() && crusader->GetEntry() == crusader->GetCreatureData()->id)
                 {
                     crusader->m_Events.AddEvent(new CaptainSurviveTalk(crusader), crusader->m_Events.CalculateTime(delay));
-                    delay += 6000;
+                    delay += 6s;
                 }
             }
         }
@@ -1199,7 +1199,7 @@ struct npc_frostwing_ymirjar_vrykul : public ScriptedAI
         {
             case NPC_YMIRJAR_FROSTBINDER:
                 me->RemoveAurasDueToSpell(SPELL_ARCTIC_CHILL);
-            /* fallthrough */
+                [[fallthrough]];
             case NPC_YMIRJAR_DEATHBRINGER:
                 _OOCevents.ScheduleEvent(EVENT_YMIRJAR_SPIRIT_STREAM, 10s, 20s);
                 break;
@@ -1406,7 +1406,7 @@ struct npc_impaling_spear : public CreatureAI
         {
             _vehicleCheckTimer = 500;
             if (!me->GetVehicle())
-                me->DespawnOrUnsummon(100);
+                me->DespawnOrUnsummon(100ms);
         }
         else
             _vehicleCheckTimer -= diff;
@@ -1468,7 +1468,7 @@ class spell_svalna_remove_spear : public SpellScript
         {
             if (Unit* vehicle = target->GetVehicleBase())
                 vehicle->RemoveAurasDueToSpell(SPELL_IMPALING_SPEAR);
-            target->DespawnOrUnsummon(1);
+            target->DespawnOrUnsummon(1ms);
         }
     }
 
@@ -1502,7 +1502,7 @@ void AddSC_boss_sister_svalna()
     RegisterIcecrownCitadelCreatureAI(npc_captain_rupert);
     RegisterIcecrownCitadelCreatureAI(npc_frostwing_ymirjar_vrykul);
     RegisterIcecrownCitadelCreatureAI(npc_impaling_spear);
-    new spell_trigger_spell_from_caster("spell_svalna_caress_of_death", SPELL_IMPALING_SPEAR_KILL);
+    RegisterSpellScriptWithArgs(spell_trigger_spell_from_caster, "spell_svalna_caress_of_death", SPELL_IMPALING_SPEAR_KILL);
     RegisterSpellScript(spell_svalna_revive_champion);
     RegisterSpellScript(spell_svalna_remove_spear);
     new at_icc_start_frostwing_gauntlet();
