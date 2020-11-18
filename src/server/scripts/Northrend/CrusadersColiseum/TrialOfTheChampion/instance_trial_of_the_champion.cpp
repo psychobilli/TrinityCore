@@ -104,7 +104,6 @@ public:
                     if (Player* player = players.begin()->GetSource())
                         _teamInInstance = player->GetTeam();
             }
-
             switch (creature->GetEntry())
             {
             case NPC_MOKRA:
@@ -390,7 +389,6 @@ public:
             uint32 _teamInInstance;
             uint8 _argentSoldierDeaths;
     };
-
 };
 
 void AddSC_instance_trial_of_the_champion()

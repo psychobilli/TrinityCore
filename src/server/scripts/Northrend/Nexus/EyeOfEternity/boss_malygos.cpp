@@ -374,7 +374,6 @@ public:
             Initialize();
 
             me->SetDisableGravity(true);
-            me->SetByteFlag(UNIT_FIELD_BYTES_1, UNIT_BYTES_1_OFFSET_ANIM_TIER, UNIT_BYTE1_FLAG_ALWAYS_STAND | UNIT_BYTE1_FLAG_HOVER);
             me->SetImmuneToAll(true);
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             // TO DO: find what in core is making boss slower than in retail (when correct speed data) or find missing movement flag update or forced spline change
@@ -598,7 +597,7 @@ public:
                     summons.DespawnAll();
             }
 
-            me->DespawnOrUnsummon(0, 30s);
+            me->DespawnOrUnsummon(0s, 30s);
         }
 
         void KilledUnit(Unit* victim) override
@@ -981,10 +980,10 @@ public:
             _JustDied();
             Talk(SAY_DEATH);
             if (Creature* alexstraszaGiftBoxBunny = ObjectAccessor::GetCreature(*me, instance->GetGuidData(DATA_GIFT_BOX_BUNNY_GUID)))
-                alexstraszaGiftBoxBunny->SummonGameObject(RAID_MODE(GO_HEART_OF_MAGIC_10, GO_HEART_OF_MAGIC_25), HeartOfMagicSpawnPos, QuaternionData(), 0);
+                alexstraszaGiftBoxBunny->SummonGameObject(RAID_MODE(GO_HEART_OF_MAGIC_10, GO_HEART_OF_MAGIC_25), HeartOfMagicSpawnPos, QuaternionData(), 0s);
 
             me->SummonCreature(NPC_ALEXSTRASZA, AlexstraszaSpawnPos, TEMPSUMMON_MANUAL_DESPAWN);
-            me->DespawnOrUnsummon(5*IN_MILLISECONDS);
+            me->DespawnOrUnsummon(5s);
         }
 
     private:
@@ -1204,7 +1203,7 @@ public:
                 }
             }
 
-            me->DespawnOrUnsummon(3*IN_MILLISECONDS);
+            me->DespawnOrUnsummon(3s);
         }
 
         void MovementInform(uint32 type, uint32 id) override
@@ -1284,7 +1283,7 @@ public:
             }
             else
             {
-                me->DespawnOrUnsummon(3*IN_MILLISECONDS);
+                me->DespawnOrUnsummon(3s);
             }
         }
 
@@ -1469,7 +1468,7 @@ public:
             if (Creature* malygos = ObjectAccessor::GetCreature(*me, _instance->GetGuidData(DATA_MALYGOS)))
             {
                 if (malygos->AI()->GetData(DATA_PHASE) == PHASE_TWO)
-                    me->DespawnOrUnsummon(6*IN_MILLISECONDS);
+                    me->DespawnOrUnsummon(6s);
                 // If evade is hit during phase II shields should disappear with no delay
                 else if (malygos->AI()->GetData(DATA_PHASE) == 0)
                     me->DespawnOrUnsummon();
@@ -1538,7 +1537,7 @@ public:
         {
             if (!apply)
             {
-                me->DespawnOrUnsummon(2050);
+                me->DespawnOrUnsummon(2050ms);
                 me->SetOrientation(2.5f);
                 me->SetSpeedRate(MOVE_FLIGHT, 1.0f);
                 Position pos = me->GetPosition();
@@ -1576,7 +1575,7 @@ class npc_static_field : public CreatureScript
             void IsSummonedBy(WorldObject* /*summoner*/) override
             {
                 // For some great reason the spell doesn't time it...
-                me->DespawnOrUnsummon(30*IN_MILLISECONDS);
+                me->DespawnOrUnsummon(30s);
             }
         };
 
@@ -2384,9 +2383,9 @@ class spell_alexstrasza_gift_beam_visual : public SpellScriptLoader
                 if (Creature* target = GetTarget()->ToCreature())
                 {
                     if (target->GetMap()->GetDifficulty() == RAID_DIFFICULTY_10MAN_NORMAL)
-                        _alexstraszaGift = target->SummonGameObject(GO_ALEXSTRASZA_S_GIFT_10, *target, QuaternionData(), 0);
+                        _alexstraszaGift = target->SummonGameObject(GO_ALEXSTRASZA_S_GIFT_10, *target, QuaternionData(), 0s);
                     else if (target->GetMap()->GetDifficulty() == RAID_DIFFICULTY_25MAN_NORMAL)
-                        _alexstraszaGift = target->SummonGameObject(GO_ALEXSTRASZA_S_GIFT_25, *target, QuaternionData(), 0);
+                        _alexstraszaGift = target->SummonGameObject(GO_ALEXSTRASZA_S_GIFT_25, *target, QuaternionData(), 0s);
                 }
             }
 
