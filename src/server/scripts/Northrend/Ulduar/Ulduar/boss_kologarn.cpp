@@ -112,7 +112,6 @@ class boss_kologarn : public CreatureScript
 
                 DoCast(SPELL_KOLOGARN_REDUCE_PARRY);
                 SetCombatMovement(false);
-                Reset();
             }
 
             bool left, right;
@@ -151,7 +150,6 @@ class boss_kologarn : public CreatureScript
                 me->GetMotionMaster()->MoveTargetedHome();
                 me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                 me->SetCorpseDelay(604800); // Prevent corpse from despawning.
-                ForceCombatStopForCreatureEntry({ NPC_ARM_SWEEP_STALKER, NPC_RUBBLE_STALKER }, 500.f);
                 _JustDied();
             }
 
@@ -223,7 +221,7 @@ class boss_kologarn : public CreatureScript
                         break;
                     case NPC_RUBBLE:
                         summons.Summon(summon);
-                        // absence of break intended
+                        [[fallthrough]];
                     default:
                         return;
                 }
