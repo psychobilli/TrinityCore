@@ -61,7 +61,7 @@ public:
             float x, y, z;
             me->GetClosePoint(x, y, z, me->GetCombatReach() / 3, 0.1f);
 
-            if (Creature* summon = me->SummonCreature(NPC_RAGECLAW, x, y, z, 0, TEMPSUMMON_DEAD_DESPAWN, 1000))
+            if (Creature* summon = me->SummonCreature(NPC_RAGECLAW, x, y, z, 0, TEMPSUMMON_DEAD_DESPAWN, 1s))
             {
                 _rageclawGUID = summon->GetGUID();
                 LockRageclaw(summon);
@@ -153,7 +153,7 @@ public:
                 DoCast(me, SPELL_UNSHACKLED, true);
                 Talk(SAY_RAGECLAW);
                 me->GetMotionMaster()->MoveRandom(10);
-                me->DespawnOrUnsummon(10000);
+                me->DespawnOrUnsummon(10s);
             }
         }
     };
@@ -257,7 +257,7 @@ public:
                     case EVENT_RECRUIT_2:
                         me->SetWalk(true);
                         me->GetMotionMaster()->MovePoint(0, me->GetPositionX() + (std::cos(_heading) * 10), me->GetPositionY() + (std::sin(_heading) * 10), me->GetPositionZ());
-                        me->DespawnOrUnsummon(5000);
+                        me->DespawnOrUnsummon(5s);
                         break;
                     default:
                         break;
@@ -268,7 +268,7 @@ public:
                 return;
         }
 
-        bool GossipSelect(Player* player, uint32 /*menuId*/, uint32 /*gossipListId*/) override
+        bool OnGossipSelect(Player* player, uint32 /*menuId*/, uint32 /*gossipListId*/) override
         {
             _events.ScheduleEvent(EVENT_RECRUIT_1, 100ms);
             CloseGossipMenuFor(player);
@@ -309,7 +309,7 @@ public:
     {
         go_scourge_enclosureAI(GameObject* go) : GameObjectAI(go) { }
 
-        bool GossipHello(Player* player) override
+        bool OnGossipHello(Player* player) override
         {
             me->UseDoorOrButton();
             if (player->GetQuestStatus(QUEST_OUR_ONLY_HOPE) == QUEST_STATUS_INCOMPLETE)
@@ -318,7 +318,7 @@ public:
                 {
                     player->KilledMonsterCredit(gymerDummy->GetEntry(), gymerDummy->GetGUID());
                     gymerDummy->CastSpell(gymerDummy, SPELL_GYMER_LOCK_EXPLOSION, true);
-                    gymerDummy->DespawnOrUnsummon(4 * IN_MILLISECONDS);
+                    gymerDummy->DespawnOrUnsummon(4s);
                 }
             }
             return true;
@@ -563,7 +563,7 @@ public:
                 }
             }
 
-            bool GossipSelect(Player* player, uint32 /*menuId*/, uint32 /*gossipListId*/) override
+            bool OnGossipSelect(Player* player, uint32 /*menuId*/, uint32 /*gossipListId*/) override
             {
                 CloseGossipMenuFor(player);
                 DoCast(player, SPELL_ALCHEMIST_APPRENTICE_INVISBUFF);
@@ -594,7 +594,7 @@ public:
     {
         go_finklesteins_cauldronAI(GameObject* go) : GameObjectAI(go) { }
 
-        bool GossipHello(Player* player) override
+        bool OnGossipHello(Player* player) override
         {
             player->CastSpell(player, SPELL_POT_CHECK);
             return true;
@@ -1060,8 +1060,8 @@ void AddSC_zuldrak()
     new spell_pot_check();
     new spell_fetch_ingredient_aura();
     new npc_storm_cloud();
-    RegisterAuraScript(spell_scourge_disguise);
-    RegisterAuraScript(spell_scourge_disguise_instability);
-    RegisterAuraScript(spell_scourge_disguise_expiring);
+    RegisterSpellScript(spell_scourge_disguise);
+    RegisterSpellScript(spell_scourge_disguise_instability);
+    RegisterSpellScript(spell_scourge_disguise_expiring);
     RegisterSpellScript(spell_drop_disguise);
 }

@@ -123,7 +123,7 @@ public:
             }
         }
 
-        void QuestAccept(Player* player, Quest const* quest) override
+        void OnQuestAccept(Player* player, Quest const* quest) override
         {
             if (quest->GetQuestId() == QUEST_SHATTERED_SALUTE)
             {
@@ -226,7 +226,7 @@ public:
             DoMeleeAttackIfReady();
         }
 
-        bool GossipSelect(Player* player, uint32 /*menuId*/, uint32 gossipListId) override
+        bool OnGossipSelect(Player* player, uint32 /*menuId*/, uint32 gossipListId) override
         {
             uint32 const action = player->PlayerTalkClass->GetGossipOptionAction(gossipListId);
             ClearGossipMenuFor(player);
@@ -264,7 +264,7 @@ public:
             return true;
         }
 
-        bool GossipHello(Player* player) override
+        bool OnGossipHello(Player* player) override
         {
             if (me->IsQuestGiver())
                 player->PrepareQuestMenu(me->GetGUID());
@@ -761,7 +761,7 @@ public:
                             jaina->AI()->Talk(SAY_JAINA_4);
                             jaina->SetWalk(true);
                             jaina->GetMotionMaster()->MovePoint(2, jaina->GetHomePosition());
-                            jaina->DespawnOrUnsummon(5000);
+                            jaina->DespawnOrUnsummon(5s);
                         }
                         events.ScheduleEvent(EVENT_HERALD_SCENE15, 7s);
                         break;

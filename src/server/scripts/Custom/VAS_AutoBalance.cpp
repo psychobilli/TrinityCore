@@ -36,9 +36,12 @@
 #include "MapManager.h"
 #include "World.h"
 #include "Map.h"
+#include "RBAC.h"
 #include "ScriptMgr.h"
 #include "Log.h"
 #include <vector>
+
+using namespace Trinity::ChatCommands;
 
 
 struct AutoBalanceCreatureInfo
@@ -566,17 +569,17 @@ class VAS_AutoBalance_CommandScript : public CommandScript
 public:
     VAS_AutoBalance_CommandScript() : CommandScript("VAS_AutoBalance_CommandScript") { }
 
-    std::vector<ChatCommand> GetCommands() const
+    ChatCommandTable GetCommands() const override
     {
-        static std::vector<ChatCommand> vasCommandTable =
+        static ChatCommandTable vasCommandTable =
         {
-            { "setoffset",        SEC_GAMEMASTER,                        true, &HandleVasSetOffsetCommand,                 "" },
-            { "getoffset",        SEC_GAMEMASTER,                        true, &HandleVasGetOffsetCommand,                 "" },
+            { "setoffset",        HandleVasSetOffsetCommand,                 rbac::RBAC_ROLE_GAMEMASTER,                        Console::Yes },
+            { "getoffset",        HandleVasGetOffsetCommand,                 rbac::RBAC_ROLE_GAMEMASTER,                        Console::Yes },
         };
 
-        static std::vector<ChatCommand> commandTable =
+        static ChatCommandTable commandTable =
         {
-            { "vas",     SEC_GAMEMASTER,                            false, NULL,                      "", vasCommandTable },
+            { "vas",     vasCommandTable },
         };
         return commandTable;
     }

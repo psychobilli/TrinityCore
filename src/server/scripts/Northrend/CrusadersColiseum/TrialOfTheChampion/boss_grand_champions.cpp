@@ -200,7 +200,7 @@ Creature* FindMyMount(Creature* me, bool newMount = false)
         // Summoning a new vehicle if all others are used
         // can but should not occur
         uint32 tmpEntry = instance->GetData(DATA_TEAM_IN_INSTANCE) == ALLIANCE ? VEHICLE_ARGENT_BATTLEWORG : VEHICLE_ARGENT_WARHORSE;
-        if (Creature* mount = me->SummonCreature(tmpEntry, bossExitPos, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 10000))
+        if (Creature* mount = me->SummonCreature(tmpEntry, bossExitPos, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 10000s))
         {
             if (instance->GetGuidData(DATA_GRAND_CHAMPION_1) == me->GetGUID())
                 instance->SetGuidData(DATA_GRAND_CHAMPION_VEHICLE_1, mount->GetGUID());

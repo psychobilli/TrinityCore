@@ -1075,7 +1075,7 @@ public:
                             DoCast(citizen, SPELL_CRUSADER_STRIKE, TRIGGERED_IGNORE_SET_FACING);
                         if (Creature* resident = me->FindNearestCreature(NPC_RESIDENT, 100.0f, true))
                         {
-                            resident->SetFlag(UNIT_NPC_EMOTESTATE, EMOTE_STATE_COWER);
+                            resident->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_COWER);
                             resident->AI()->Talk(RP2_LINE_RESIDENT1, ObjectAccessor::GetUnit(*me, _eventStarterGuid));
                         }
                         break;
@@ -1150,7 +1150,7 @@ public:
                         break;
                     case RP2_EVENT_MALGANIS_LEAVE2:
                         if (Creature* malganis = me->FindNearestCreature(NPC_MALGANIS, 80.0f, true))
-                            malganis->DespawnOrUnsummon(0);
+                            malganis->DespawnOrUnsummon();
                         if (Creature* bunny = me->FindNearestCreature(NPC_MALGANIS_BUNNY, 80.0f, true))
                             bunny->CastSpell(bunny, SPELL_SHADOWSTEP_VISUAL);
                         break;
@@ -1488,6 +1488,7 @@ public:
                             if (GameObject* gate = chromie->FindNearestGameObject(CITY_EXIT_GATE, 100.0f))
                                 gate->SetGoState(GO_STATE_ACTIVE);
                         }
+                        break;
                     default:
                         break;
                 }
@@ -1597,7 +1598,7 @@ public:
                 instance->SetGuidData(command, cause->GetGUID());
         }
 
-        bool GossipSelect(Player* player, uint32 /*sender*/, uint32 listId) override
+        bool OnGossipSelect(Player* player, uint32 /*sender*/, uint32 listId) override
         {
             uint32 const action = GetGossipActionFor(player, listId);
             TC_LOG_TRACE("scripts.cos", "npc_arthas_stratholmeAI::GossipSelect: '%s' selects action '%u' on '%s'", player->GetGUID().ToString().c_str(), action, me->GetGUID().ToString().c_str());
@@ -1610,7 +1611,7 @@ public:
             return true;
         }
 
-        bool GossipHello(Player* /*player*/) override
+        bool OnGossipHello(Player* /*player*/) override
         {
             return false;
         }

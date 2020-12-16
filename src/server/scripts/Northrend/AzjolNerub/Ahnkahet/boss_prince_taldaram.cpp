@@ -378,7 +378,7 @@ class npc_prince_taldaram_flame_sphere : public CreatureScript
                         }
                         case EVENT_DESPAWN:
                             DoCast(me, SPELL_FLAME_SPHERE_DEATH_EFFECT, true);
-                            me->DespawnOrUnsummon(1000);
+                            me->DespawnOrUnsummon(1s);
                             break;
                         default:
                             break;
@@ -409,7 +409,7 @@ class go_prince_taldaram_sphere : public GameObjectScript
 
             InstanceScript* instance;
 
-            bool GossipHello(Player* /*player*/) override
+            bool OnGossipHello(Player* /*player*/) override
             {
                 Creature* princeTaldaram = instance->GetCreature(DATA_PRINCE_TALDARAM);
                 if (princeTaldaram && princeTaldaram->IsAlive())

@@ -294,7 +294,7 @@ public:
     {
         boss_eadricAI(Creature* creature) : argent_challenge_baseAI(creature) { }
 
-        void Initialize()
+        void Initialize() override
         {
             _faceroller = false;
         }
@@ -437,7 +437,7 @@ public:
     {
         boss_paletressAI(Creature* creature) : argent_challenge_baseAI(creature) { }
 
-        void Initialize()
+        void Initialize() override
         {
             argent_challenge_baseAI::Initialize();
             _memorySummoned = false;
