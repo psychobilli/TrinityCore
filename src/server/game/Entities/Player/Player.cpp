@@ -6854,7 +6854,7 @@ bool Player::RewardHonor(Unit* victim, uint32 groupsize, int32 honor, bool pvpto
             uint8 v_level = victim->GetLevel();
             if (v_level <= k_grey)
                 return false;
-            uint32 victim_title = 0;
+            // uint32 victim_title = 0;
             victim_guid = ObjectGuid::Empty;
             honor_f = ceil(Trinity::Honor::hk_honor_at_level_f(k_level) * (v_level - k_grey) / (k_level - k_grey));
             // count the number of playerkills in one day
