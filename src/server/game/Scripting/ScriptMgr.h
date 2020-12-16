@@ -432,7 +432,7 @@ class TC_GAME_API UnitScript : public ScriptObject
         virtual void ModifyVehiclePassengerExitPos(Unit* /*passenger*/, Vehicle* /*vehicle*/, Position& /*pos*/) { }
         
         //VAS AutoBalance
-        virtual uint32 DealDamage(Unit* /*AttackerUnit*/, Unit /**pVictim*/, uint32 /*damage*/, DamageEffectType /*damagetype*/) { return damage; }
+        virtual uint32 DealDamage(Unit* /*AttackerUnit*/, Unit* /*pVictim*/, uint32 /*damage*/, DamageEffectType /*damagetype*/) { return damage; }
         virtual void ModHeal(Unit* /*healer*/, Unit* /*reciever*/, uint32& /*gain*/) { }
 };
 
