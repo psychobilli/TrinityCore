@@ -10,3 +10,5 @@ UPDATE `quest_template_addon` SET `NextQuestID` = 12229 WHERE `ID` = 12213;
 
 UPDATE `quest_template_addon` SET `NextQuestID` = 12255 WHERE `ID` = 12222;
 UPDATE `quest_template_addon` SET `NextQuestID` = 12255 WHERE `ID` = 12223;
+
+UPDATE `smart_scripts` SET `target_type` = 27 WHERE `entryorguid` IN (27718,27715,27717,27716,27727) AND `source_type` = 0 AND `event_type` = 6 AND `action_type` = 15;
