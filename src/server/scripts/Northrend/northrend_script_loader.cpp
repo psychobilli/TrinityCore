@@ -42,11 +42,11 @@ void AddSC_boss_king_dred();
 void AddSC_boss_tharon_ja();
 void AddSC_instance_drak_tharon_keep();
 // Trial of the Champion
-void AddSC_boss_argent_challenge();
-void AddSC_boss_black_knight();
-void AddSC_boss_grand_champions();
-void AddSC_instance_trial_of_the_champion();
-void AddSC_trial_of_the_champion();
+void AddSC_boss_argent_challenge_fix();
+void AddSC_boss_black_knight_fix();
+void AddSC_boss_grand_champions_fix();
+void AddSC_instance_trial_of_the_champion_fix();
+void AddSC_trial_of_the_champion_fix();
 // Trial of the Crusader
 void AddSC_boss_anubarak_trial();
 void AddSC_boss_faction_champions();
@@ -237,11 +237,11 @@ void AddNorthrendScripts()
     AddSC_boss_tharon_ja();
     AddSC_instance_drak_tharon_keep();
     // Trial of the Champion
-    AddSC_boss_argent_challenge();
-    AddSC_boss_black_knight();
-    AddSC_boss_grand_champions();
-    AddSC_instance_trial_of_the_champion();
-    AddSC_trial_of_the_champion();
+    AddSC_boss_argent_challenge_fix();
+    AddSC_boss_black_knight_fix();
+    AddSC_boss_grand_champions_fix();
+    AddSC_instance_trial_of_the_champion_fix();
+    AddSC_trial_of_the_champion_fix();
     // Trial of the Crusader
     AddSC_boss_anubarak_trial();
     AddSC_boss_faction_champions();
