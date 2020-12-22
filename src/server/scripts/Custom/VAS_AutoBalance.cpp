@@ -212,7 +212,7 @@ public:
     {
     }
 
-    uint32 DealDamage(Unit* AttackerUnit, Unit *playerVictim, uint32 damage, DamageEffectType damagetype)
+    uint32 DealDamage(Unit* AttackerUnit, Unit *playerVictim, uint32 damage, DamageEffectType /*damagetype*/)
     {
         if ((AttackerUnit->GetMap()->IsDungeon() && playerVictim->GetMap()->IsDungeon()) || sConfigMgr->GetIntDefault("VASAutoBalance.DungeonsOnly", 1) < 1)
             if (AttackerUnit->GetTypeId() != TYPEID_PLAYER)
@@ -247,7 +247,7 @@ public:
         return damage;
     }
 
-    void CalculateSpellDamageTaken(SpellNonMeleeDamage *damageInfo, int32 damage, SpellInfo const *spellInfo, WeaponAttackType attackType, bool crit)
+    void CalculateSpellDamageTaken(SpellNonMeleeDamage *damageInfo, int32 /*damage*/, SpellInfo* const /*spellInfo*/, WeaponAttackType/* attackType*/, bool /*crit*/)
     {
         if (sConfigMgr->GetIntDefault("VASAutoBalance.DungeonsOnly", 1) < 1 || (damageInfo->attacker->GetMap()->IsDungeon() && damageInfo->target->GetMap()->IsDungeon()) || (damageInfo->attacker->GetMap()->IsBattleground() && damageInfo->target->GetMap()->IsBattleground()))
         {
@@ -261,7 +261,7 @@ public:
         return;
     }
 
-    void CalculateMeleeDamage(Unit *playerVictim, uint32 damage, CalcDamageInfo *damageInfo, WeaponAttackType attackType)
+    void CalculateMeleeDamage(Unit* /*playerVictim*/, uint32 /*damage*/, CalcDamageInfo *damageInfo, WeaponAttackType /*attackType*/)
     {
         // Make sure the Attacker and the Victim are in the same location, in addition that the attacker is not player.
         if ((sConfigMgr->GetIntDefault("VASAutoBalance.DungeonsOnly", 1) < 1 || (damageInfo->Attacker->GetMap()->IsDungeon() && damageInfo->Target->GetMap()->IsDungeon()) || (damageInfo->Attacker->GetMap()->IsBattleground() && damageInfo->Target->GetMap()->IsBattleground())) && (damageInfo->Attacker->GetTypeId() != TYPEID_PLAYER))
@@ -361,7 +361,7 @@ public:
     }
 
 
-    void Creature_SelectLevel(const CreatureTemplate *creatureTemplate, Creature* creature)
+    void Creature_SelectLevel(const CreatureTemplate* /*creatureTemplate*/, Creature* creature)
     {
 
         if (creature->GetMap()->IsDungeon() || sConfigMgr->GetIntDefault("VASAutoBalance.DungeonsOnly", 1) < 1)
@@ -377,7 +377,7 @@ public:
         }
     }
 
-    void OnAllCreatureUpdate(Creature* creature, uint32 diff)
+    void OnAllCreatureUpdate(Creature* creature, uint32 /*diff*/)
     {
         bool log = IsLogCreatureId(creature->GetEntry());
         if (log) {
@@ -422,7 +422,7 @@ public:
         }
     }
 
-    bool DoCreatureUpdate(Creature* creature, Map* map, bool log) {
+    bool DoCreatureUpdate(Creature* creature, Map* map, bool /*log*/) {
         if (CreatureInfo[creature->GetGUID()].instanceId != map->GetInstanceId()) {
            // if (log)
                // TC_LOG_DEBUG("creature.log", "VAS_Autobalance: CreatureId %u, name %s, update for new instanceid %u.", creature->GetEntry(), creature->GetName(), map->GetInstanceId());
@@ -584,15 +584,15 @@ public:
         return commandTable;
     }
 
-    static bool HandleVasSetOffsetCommand(ChatHandler* handler, const char* args)
+    static bool HandleVasSetOffsetCommand(ChatHandler* handler, char args)
     {
-        if (!*args)
+        if (!args)
         {
             handler->PSendSysMessage(".vas setoffset #");
             handler->PSendSysMessage("Sets the Player Difficulty Offset for instances. Example: (You + offset(1) = 2 player difficulty).");
             return false;
         }
-        char* offset = strtok((char*)args, " ");
+        char* offset = strtok(&args, " ");
         int32 offseti = -1;
 
         if (offset)
@@ -606,7 +606,7 @@ public:
             handler->PSendSysMessage("Error changing Player Difficulty Offset! Please try again.");
         return false;
     }
-    static bool HandleVasGetOffsetCommand(ChatHandler* handler, const char* /*args*/)
+    static bool HandleVasGetOffsetCommand(ChatHandler* handler, char /*args*/)
     {
         handler->PSendSysMessage("Current Player Difficulty Offset = %i", PlayerCountDifficultyOffset);
         return true;

@@ -1654,6 +1654,7 @@ public:
                     if (!me->HasAura(SPELL_DEADLY_POISON))
                         DoCast(me, SPELL_DEADLY_POISON);
                     events.ScheduleEvent(EVENT_DEADLY_POISON, 30s);
+                    break;
                 case EVENT_EVISCERATE:
                     DoCastVictim(SPELL_EVISCERATE);
                     events.ScheduleEvent(EVENT_EVISCERATE, 8s);

@@ -645,6 +645,8 @@ public:
                 case BOSS_PALETRESS:
                     uiArgentChampion = NPC_PALETRESS;
                     break;
+                default:
+                    break;
            }
         }
 

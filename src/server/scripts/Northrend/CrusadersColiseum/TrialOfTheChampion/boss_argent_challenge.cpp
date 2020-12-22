@@ -1166,7 +1166,7 @@ class spell_paletress_summon_memory : public SpellScriptLoader
 
             void HandleScript(SpellEffIndex /*effIndex*/)
             {
-                uint32 const randMemorySpellId = Trinity::Containers::SelectRandomContainerElement(memorySpellId);
+                /*uint32 const randMemorySpellId =*/ Trinity::Containers::SelectRandomContainerElement(memorySpellId);
                 GetHitUnit()->CastSpell(GetHitUnit(), memorySpellId[urand(0, 24)], GetCaster()->GetGUID());
             }
 
