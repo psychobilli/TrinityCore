@@ -16,16 +16,10 @@
  */
 
 #include "Player.h"
-
 #include "ScriptMgr.h"
-#include "InstanceScript.h"
-#include "MotionMaster.h"
-#include "ObjectAccessor.h"
-#include "ScriptedEscortAI.h"
 #include "PassiveAI.h"
 #include "ScriptedCreature.h"
 #include "SpellScript.h"
-#include "TemporarySummon.h"
 #include "trial_of_the_champion.h"
 
 enum Yells
@@ -300,7 +294,7 @@ public:
     {
         boss_eadricAI(Creature* creature) : argent_challenge_baseAI(creature) { }
 
-        void Initialize()
+        void Initialize() override
         {
             _faceroller = false;
         }
@@ -372,7 +366,7 @@ public:
             if (me->HasUnitState(UNIT_STATE_CASTING))
                 return;
 
-            Milliseconds time = 0s;
+            Milliseconds time = (Milliseconds) 0;
             while (uint32 eventId = events.ExecuteEvent())
             {
                 switch (eventId)
@@ -443,7 +437,7 @@ public:
     {
         boss_paletressAI(Creature* creature) : argent_challenge_baseAI(creature) { }
 
-        void Initialize()
+        void Initialize() override
         {
             argent_challenge_baseAI::Initialize();
             _memorySummoned = false;
@@ -893,11 +887,12 @@ public:
 
         void JustEngagedWith(Unit* /*who*/) override
         {
+            Milliseconds time = (Milliseconds) 0;
             switch (me->GetEntry())
             {
             case NPC_ARGENT_LIGHWIELDER:
                 _events.ScheduleEvent(EVENT_BLAZING_LIGHT, 10s);
-                Milliseconds time = (Milliseconds)urand(12000, 15000);
+                time = (Milliseconds)urand(12000, 15000);
                 _events.ScheduleEvent(EVENT_CLEAVE, time);
                 if (IsHeroic())
                     _events.ScheduleEvent(EVENT_UNBALANCING_STRIKE, 8s);
@@ -1171,7 +1166,7 @@ class spell_paletress_summon_memory : public SpellScriptLoader
 
             void HandleScript(SpellEffIndex /*effIndex*/)
             {
-                uint32 const randMemorySpellId = Trinity::Containers::SelectRandomContainerElement(memorySpellId);
+                /*uint32 const randMemorySpellId =*/ Trinity::Containers::SelectRandomContainerElement(memorySpellId);
                 GetHitUnit()->CastSpell(GetHitUnit(), memorySpellId[urand(0, 24)], GetCaster()->GetGUID());
             }
 

@@ -200,7 +200,7 @@ Creature* FindMyMount(Creature* me, bool newMount = false)
         // Summoning a new vehicle if all others are used
         // can but should not occur
         uint32 tmpEntry = instance->GetData(DATA_TEAM_IN_INSTANCE) == ALLIANCE ? VEHICLE_ARGENT_BATTLEWORG : VEHICLE_ARGENT_WARHORSE;
-        if (Creature* mount = me->SummonCreature(tmpEntry, bossExitPos, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 10s))
+        if (Creature* mount = me->SummonCreature(tmpEntry, bossExitPos, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 10000s))
         {
             if (instance->GetGuidData(DATA_GRAND_CHAMPION_1) == me->GetGUID())
                 instance->SetGuidData(DATA_GRAND_CHAMPION_VEHICLE_1, mount->GetGUID());
@@ -1654,6 +1654,7 @@ public:
                     if (!me->HasAura(SPELL_DEADLY_POISON))
                         DoCast(me, SPELL_DEADLY_POISON);
                     events.ScheduleEvent(EVENT_DEADLY_POISON, 30s);
+                    break;
                 case EVENT_EVISCERATE:
                     DoCastVictim(SPELL_EVISCERATE);
                     events.ScheduleEvent(EVENT_EVISCERATE, 8s);
