@@ -145,7 +145,7 @@ enum PointMovement
     POINT_DESPAWN
 };
 
-void AggroAllPlayers(Creature* temp)
+void AggroAllPlayersFix(Creature* temp)
 {
     temp->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_IMMUNE_TO_PC);
     temp->SetReactState(REACT_AGGRESSIVE);
@@ -236,13 +236,13 @@ void SetGrandChampionToEvadeMode(Creature* me)
     if (Creature* mount = FindMyMount(me))
     {
         mount->AI()->Reset();
-        AggroAllPlayers(mount);
+        AggroAllPlayersFix(mount);
         mount->GetMotionMaster()->Clear();
         mount->GetMotionMaster()->MoveTargetedHome();
     }
     DoCastPennant(me);
     // On reset Grand Champions' flags are restored to DB values and we don't want that
-    AggroAllPlayers(me);
+    AggroAllPlayersFix(me);
 }
 
 /*
@@ -320,7 +320,7 @@ struct boss_grand_championAI : BossAI
                 {
                     if (Creature* pGrandChampion = ObjectAccessor::GetCreature(*me, instance->GetGuidData(DATA_GRAND_CHAMPION_1 + i)))
                     {
-                        AggroAllPlayers(pGrandChampion);
+                        AggroAllPlayersFix(pGrandChampion);
                         if (!pGrandChampion->IsInCombat())
                             pGrandChampion->AI()->AttackStart(plr);
                     }
@@ -390,7 +390,7 @@ struct boss_grand_championAI : BossAI
             bHome = false;
         }
         else if (MountedPhaseDone && !bHome)
-            AggroAllPlayers(me);
+            AggroAllPlayersFix(me);
         _JustReachedHome();
     }
 
@@ -627,8 +627,8 @@ struct boss_grand_championAI : BossAI
                     me->ApplySpellImmune(SPELL_TRAMPLE_AURA, IMMUNITY_ID, SPELL_TRAMPLE_AURA, false);
                     me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                     DoCastPennant(me);
-                    AggroAllPlayers(me);
-                    AggroAllPlayers(mount);
+                    AggroAllPlayersFix(me);
+                    AggroAllPlayersFix(mount);
                     bool foundPlr = false;
                     Map::PlayerList const& players = me->GetMap()->GetPlayers();
                     for (Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
