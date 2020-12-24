@@ -98,6 +98,12 @@ namespace {
                 if (player->GetPowerType() == POWER_MANA) {
                     player->SetPower(POWER_MANA, player->GetMaxPower(POWER_MANA));
                 }
+                for (Unit* pet : player->m_Controlled) {
+                    for (int32 i = STAT_STRENGTH; i < MAX_STATS; ++i) {
+                        pet->HandleStatFlatModifier(UnitMods(UNIT_MOD_STAT_START + i), TOTAL_VALUE, float(difficulty * 100), true);
+                    }
+                    pet->SetFullHealth();
+                }
             }
         }
 
@@ -112,6 +118,11 @@ namespace {
 
                 for (int32 i = STAT_STRENGTH; i < MAX_STATS; ++i) {
                     player->HandleStatFlatModifier(UnitMods(UNIT_MOD_STAT_START + i), TOTAL_VALUE, float(difficulty * 100), false);
+                }
+                for (Unit* pet : player->m_Controlled) {
+                    for (int32 i = STAT_STRENGTH; i < MAX_STATS; ++i) {
+                        pet->HandleStatFlatModifier(UnitMods(UNIT_MOD_STAT_START + i), TOTAL_VALUE, float(difficulty * 100), false);
+                    }
                 }
             }
         }
