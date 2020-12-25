@@ -73,11 +73,11 @@ void LoadMaxHealthPctForDamage()
 {
     MaxDamagePct = sConfigMgr->GetIntDefault("VASAutoBalance.MaxHealthPctForDamage", 15);
 
-    if (maxDamagePct > 100)
+    if (MaxDamagePct > 100)
     {
         MaxDamagePct = 100;
     } 
-    else if (maxDamagePct < 10)  
+    else if (MaxDamagePct < 10)  
     {
         MaxDamagePct = 10;
     }
