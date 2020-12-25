@@ -249,7 +249,7 @@ public:
             {
                 if (CreatureInfo[healer->GetGUID()].instanceId == healer->GetMap()->GetInstanceId())
                 {
-                    gain = VAS_Modifer_DealDamage(receiver, gain);
+                    gain = VAS_Modifer_DealDamage(receiver, gain, gain);
                 }
             }
         }
