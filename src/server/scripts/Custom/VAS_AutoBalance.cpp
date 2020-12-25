@@ -57,6 +57,7 @@ static std::map<int, int> forcedCreatureIds;                   // The map values
 static std::map<int, int> blockedCreatureIds;
 static std::map<int, int> logCreatureIds;                      // Used to log updates to selected creatures for debugging purposes.
 static int8 PlayerCountDifficultyOffset; //cheaphack for difficulty server-wide. Another value TODO in player class for the party leader's value to determine dungeon difficulty.
+static int8 MaxDamagePct;               // Minimize total damage allowed by a pct of the player's health.
 int GetValidDebugLevel()
 {
     int debugLevel = sConfigMgr->GetIntDefault("VASAutoBalance.DebugLevel", 2);
@@ -66,6 +67,21 @@ int GetValidDebugLevel()
         return 1;
     }
     return debugLevel;
+}
+
+void LoadMaxHealthPctForDamage() 
+{
+    MaxDamagePct = sConfigMgr->GetIntDefault("VASAutoBalance.MaxHealthPctForDamage", 15);
+
+    if (maxDamagePct > 100)
+    {
+        MaxDamagePct = 100;
+    } 
+    else if (maxDamagePct < 10)  
+    {
+        MaxDamagePct = 10;
+    }
+    MaxDamagePct = MaxDamagePct * .01;
 }
 
 void LoadForcedCreatureIdsFromString(std::string creatureIds, int forcedPlayerCount) // Used for reading the string from the configuration file to for those creatures who need to be scaled for XX number of players.
@@ -186,6 +202,8 @@ public:
         LoadBlockedCreatureIdsFromString(sConfigMgr->GetStringDefault("VASAutoBalance.BlockedID2", ""), 2);
         logCreatureIds.clear();
         LoadLogCreatureIdsFromString(sConfigMgr->GetStringDefault("VASAutoBalance.LogCreature", ""));
+        LoadMaxHealthPctDamage();
+
         PlayerCountDifficultyOffset = 0;
     }
 };
@@ -217,7 +235,8 @@ public:
         if ((AttackerUnit->GetMap()->IsDungeon() && playerVictim->GetMap()->IsDungeon()) || sConfigMgr->GetIntDefault("VASAutoBalance.DungeonsOnly", 1) < 1)
             if (AttackerUnit->GetTypeId() != TYPEID_PLAYER)
             {
-                damage = VAS_Modifer_DealDamage(AttackerUnit, damage);
+                uint32 maxDamageThreshold = playerVictim->GetMaxHealth() * MaxDamagePct;
+                damage = VAS_Modifer_DealDamage(AttackerUnit, damage, maxDamageThreshold);
             }
         return damage;
     }
@@ -272,15 +291,19 @@ public:
         return;
     }
 
-    uint32 VAS_Modifer_DealDamage(Unit* AttackerUnit, uint32 damage)
+    uint32 VAS_Modifer_DealDamage(Unit* AttackerUnit, uint32 damage, uint32 maxDamageThreshold)
     {
         if ((AttackerUnit->IsHunterPet() || AttackerUnit->IsPet() || AttackerUnit->IsSummon()) && AttackerUnit->IsControlledByPlayer())
             return damage;
 
         float damageMultiplier = CreatureInfo[AttackerUnit->GetGUID()].DamageMultiplier;
 
-        return damage * damageMultiplier;
-
+        uint32 damageResult = damage * damageMultiplier;
+        
+        if (damageResult > maxDamageThreshold) {
+            return maxDamageThreshold;
+        }
+        return damageResult;
     }
 };
 
