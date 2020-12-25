@@ -202,7 +202,7 @@ public:
         LoadBlockedCreatureIdsFromString(sConfigMgr->GetStringDefault("VASAutoBalance.BlockedID2", ""), 2);
         logCreatureIds.clear();
         LoadLogCreatureIdsFromString(sConfigMgr->GetStringDefault("VASAutoBalance.LogCreature", ""));
-        LoadMaxHealthPctDamage();
+        LoadMaxHealthPctForDamage();
 
         PlayerCountDifficultyOffset = 0;
     }
