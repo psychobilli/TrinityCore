@@ -241,6 +241,20 @@ public:
         return damage;
     }
 
+    void OnDamage(Unit* attacker, Unit* victim, uint32& damage) {
+        if (attacker && victim)
+        {
+            if ((attacker->GetMap()->IsDungeon() && victim->GetMap()->IsDungeon()) || sConfigMgr->GetIntDefault("VASAutoBalance.DungeonsOnly", 1) < 1)
+            {
+                if (attacker->GetTypeId() != TYPEID_PLAYER)
+                {
+                    uint32 maxDamageThreshold = victim->GetMaxHealth() * MaxDamagePct;
+                    damage = VAS_Modifer_DealDamage(attacker, damage, maxDamageThreshold);
+                }
+            }
+        }
+    }
+
     void ModHeal(Unit* healer, Unit* receiver, uint32& gain)
     {
         if ((healer->GetMap()->IsDungeon() && receiver->GetMap()->IsDungeon()) || sConfigMgr->GetIntDefault("VASAutoBalance.DungeonsOnly", 1) < 1)

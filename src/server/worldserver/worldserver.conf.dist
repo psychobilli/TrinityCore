@@ -4144,6 +4144,12 @@ VASAutoBalance.MinHPModifier = 0.100000
 #        Default:     0.10
 
 VASAutoBalance.MinDamageModifier = 0.100000
+#
+#     VASAutoBalance.MaxHealthPctForDamage
+#        Set the maxmium allowed damage for an attack on a player
+#        based on a percentage of the player's health.
+
+VASAutoBalance.MaxHealthPctForDamage = 15
 
 #
 #     VASAutoBalance.ForcedIdXX
