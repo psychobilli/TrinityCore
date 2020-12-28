@@ -128,19 +128,18 @@ namespace {
             {
                 Map *map = player->GetMap();
                 int difficulty = CalculateDifficulty(map, player);
-                ApplyBuffs(pet, map, difficulty);
+                ApplyBuffs(pet, difficulty);
             }
         }
 
         void UnsummonPet(Player *player, Unit *pet) {
             if (sConfigMgr->GetBoolDefault("Solocraft.Enable", true)) {
                 Map *map = player->GetMap();
-                ClearBuffs(pet, map);
+                ClearBuffs(pet);
             }
         }
     private:
         std::map<ObjectGuid, int> _unitDifficulty;
-        bool _justLoggedIn = false;
 
         int CalculateDifficulty(Map *map, Player* /*player*/) {
             int difficulty = 1;
@@ -171,10 +170,7 @@ namespace {
             return numInGroup;
         }
 
-        void ApplyBuffs(Unit *pet, Map *map, int difficulty) {
-            if (!_justLoggedIn) {
-                ClearBuffs(pet, map);
-            }
+        void ApplyBuffs(Unit *pet, int difficulty) {
             if (difficulty > 1) {
                 //InstanceMap *instanceMap = map->ToInstanceMap();
                 //InstanceScript *instanceScript = instanceMap->GetInstanceScript();
@@ -190,7 +186,7 @@ namespace {
             }
         }
 
-        void ClearBuffs(Unit *pet, Map *map) {
+        void ClearBuffs(Unit *pet) {
             std::map<ObjectGuid, int>::iterator unitDifficultyIterator = _unitDifficulty.find(pet->GetGUID());
             if (unitDifficultyIterator != _unitDifficulty.end()) {
                 int difficulty = unitDifficultyIterator->second;
