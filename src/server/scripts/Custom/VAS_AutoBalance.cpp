@@ -57,7 +57,7 @@ static std::map<int, int> forcedCreatureIds;                   // The map values
 static std::map<int, int> blockedCreatureIds;
 static std::map<int, int> logCreatureIds;                      // Used to log updates to selected creatures for debugging purposes.
 static int8 PlayerCountDifficultyOffset; //cheaphack for difficulty server-wide. Another value TODO in player class for the party leader's value to determine dungeon difficulty.
-static int8 MaxDamagePct;               // Minimize total damage allowed by a pct of the player's health.
+static float MaxDamagePct;               // Minimize total damage allowed by a pct of the player's health.
 int GetValidDebugLevel()
 {
     int debugLevel = sConfigMgr->GetIntDefault("VASAutoBalance.DebugLevel", 2);
@@ -248,7 +248,9 @@ public:
             {
                 if (attacker->GetTypeId() != TYPEID_PLAYER)
                 {
-                    uint32 maxDamageThreshold = victim->GetMaxHealth() * MaxDamagePct;
+                    uint32 maxDamageThreshold = damage;
+                    if (MaxDamagePct < 100)
+                        maxDamageThreshold = victim->GetMaxHealth() * MaxDamagePct;
                     damage = VAS_Modifer_DealDamage(attacker, damage, maxDamageThreshold);
                 }
             }
