@@ -98,12 +98,6 @@ namespace {
                 if (player->GetPowerType() == POWER_MANA) {
                     player->SetPower(POWER_MANA, player->GetMaxPower(POWER_MANA));
                 }
-                if (Unit* pet = player->GetPet()) {
-                    for (int32 i = STAT_STRENGTH; i < MAX_STATS; ++i) {
-                        pet->HandleStatFlatModifier(UnitMods(UNIT_MOD_STAT_START + i), TOTAL_VALUE, float(difficulty * 100), true);
-                    }
-                    pet->SetFullHealth();
-                }
             }
         }
 
@@ -119,10 +113,89 @@ namespace {
                 for (int32 i = STAT_STRENGTH; i < MAX_STATS; ++i) {
                     player->HandleStatFlatModifier(UnitMods(UNIT_MOD_STAT_START + i), TOTAL_VALUE, float(difficulty * 100), false);
                 }
-                if (Unit* pet = player->GetPet()) {
-                    for (int32 i = STAT_STRENGTH; i < MAX_STATS; ++i) {
-                        pet->HandleStatFlatModifier(UnitMods(UNIT_MOD_STAT_START + i), TOTAL_VALUE, float(difficulty * 100), false);
-                    }
+            }
+        }
+    };
+
+    class solocraft_pet_instance_handler : public UnitScript {
+    public:
+        solocraft_pet_instance_handler() : UnitScript("solocraft_pet_instance_handler") {
+            TC_LOG_INFO("scripts.solocraft.pet.instance", "[Solocraft] solocraft_pet_instance_handler Loaded");
+        }
+
+        void SummonPet(Player *player, Unit *pet) override {
+            if (sConfigMgr->GetBoolDefault("Solocraft.Enable", true))
+            {
+                Map *map = player->GetMap();
+                int difficulty = CalculateDifficulty(map, player);
+                int numInGroup = GetNumInGroup(player);
+                ApplyBuffs(pet, map, difficulty, numInGroup);
+            }
+        }
+
+        void UnsummonPet(Player *player, Unit *pet) {
+            if (sConfigMgr->GetBoolDefault("Solocraft.Enable", true)) {
+                Map *map = player->GetMap();
+                ClearBuffs(pet, map);
+            }
+        }
+    private:
+        std::map<ObjectGuid, int> _unitDifficulty;
+        bool _justLoggedIn = false;
+
+        int CalculateDifficulty(Map *map, Player* /*player*/) {
+            int difficulty = 1;
+            if (map) {
+                if (map->Is25ManRaid()) {
+                    difficulty = 25;
+                }
+                else if (map->IsHeroic()) {
+                    difficulty = 10;
+                }
+                else if (map->IsRaid()) {
+                    difficulty = 40;
+                }
+                else if (map->IsDungeon()) {
+                    difficulty = 5;
+                }
+            }
+            return difficulty;
+        }
+
+        int GetNumInGroup(Player *player) {
+            int numInGroup = 1;
+            Group *group = player->GetGroup();
+            if (group) {
+                Group::MemberSlotList const& groupMembers = group->GetMemberSlots();
+                numInGroup = groupMembers.size();
+            }
+            return numInGroup;
+        }
+
+        void ApplyBuffs(Unit *pet, Map *map, int difficulty, int numInGroup) {
+            if (!_justLoggedIn) {
+                ClearBuffs(pet, map);
+            }
+            if (difficulty > 1) {
+                //InstanceMap *instanceMap = map->ToInstanceMap();
+                //InstanceScript *instanceScript = instanceMap->GetInstanceScript();
+
+                _unitDifficulty[pet->GetGUID()] = difficulty;
+                for (int32 i = STAT_STRENGTH; i < MAX_STATS; ++i) {
+                    pet->HandleStatFlatModifier(UnitMods(UNIT_MOD_STAT_START + i), TOTAL_VALUE, float(difficulty * 100), true);
+                }
+                pet->SetFullHealth();
+            }
+        }
+
+        void ClearBuffs(Unit *pet, Map *map) {
+            std::map<ObjectGuid, int>::iterator unitDifficultyIterator = _unitDifficulty.find(pet->GetGUID());
+            if (unitDifficultyIterator != _unitDifficulty.end()) {
+                int difficulty = unitDifficultyIterator->second;
+                _unitDifficulty.erase(unitDifficultyIterator);
+
+                for (int32 i = STAT_STRENGTH; i < MAX_STATS; ++i) {
+                    pet->HandleStatFlatModifier(UnitMods(UNIT_MOD_STAT_START + i), TOTAL_VALUE, float(difficulty * 100), false);
                 }
             }
         }
@@ -133,4 +206,5 @@ namespace {
 
 void AddSC_solocraft() {
     new solocraft_player_instance_handler();
+    new solocraft_pet_instance_handler();
 }

@@ -431,6 +431,10 @@ class TC_GAME_API UnitScript : public ScriptObject
         // Called when an unit exits a vehicle
         virtual void ModifyVehiclePassengerExitPos(Unit* /*passenger*/, Vehicle* /*vehicle*/, Position& /*pos*/) { }
         
+        //Solocraft
+        virtual void SummonPet(Player* /*player*/, Unit* /*pet*/) { }
+        virtual void UnsummonPet(Player* /*player*/, Unit* /*pet*/) { }
+
         //VAS AutoBalance
         virtual uint32 DealDamage(Unit* /*AttackerUnit*/, Unit* /*pVictim*/, uint32 damage, DamageEffectType /*damagetype*/) { return damage; }
         virtual void ModHeal(Unit* /*healer*/, Unit* /*reciever*/, uint32& /*gain*/) { }

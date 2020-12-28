@@ -1832,6 +1832,18 @@ bool ScriptMgr::OnCriteriaCheck(uint32 scriptId, Player* source, Unit* target)
     return tmpscript->OnCheck(source, target);
 }
 
+// Called from Pet::LoadPetFromDB
+void SummonPet(Player* player, Unit* pet)
+{
+    FOREACH_SCRIPT(UnitScript)->SummonPet(player, pet);
+}
+
+// Called from Player::RemovePet
+void UnsummonPet(Player* player, Unit* pet)
+{ 
+    FOREACH_SCRIPT(UnitScript)->UnsummonPet(player, pet);
+}
+
 //Called From Unit::DealHeal
 void ScriptMgr::ModHeal(Unit* healer, Unit* reciever, uint32& gain)
 {
