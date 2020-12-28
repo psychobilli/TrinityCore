@@ -20743,7 +20743,7 @@ void Player::RemovePet(Pet* pet, PetSaveMode mode, bool returnreagent)
     // else (current pet) doesnt need to do anything
 
     SetMinion(pet, false);
-    sScriptMgr->RemovePet(this, pet);
+    sScriptMgr->UnsummonPet(this, pet);
 
     pet->AddObjectToRemoveList();
     pet->m_removed = true;

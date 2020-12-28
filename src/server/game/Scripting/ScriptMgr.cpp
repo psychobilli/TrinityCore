@@ -1833,13 +1833,13 @@ bool ScriptMgr::OnCriteriaCheck(uint32 scriptId, Player* source, Unit* target)
 }
 
 // Called from Pet::LoadPetFromDB
-void SummonPet(Player* player, Unit* pet)
+void ScriptMgr::SummonPet(Player* player, Unit* pet)
 {
     FOREACH_SCRIPT(UnitScript)->SummonPet(player, pet);
 }
 
 // Called from Player::RemovePet
-void UnsummonPet(Player* player, Unit* pet)
+void ScriptMgr::UnsummonPet(Player* player, Unit* pet)
 { 
     FOREACH_SCRIPT(UnitScript)->UnsummonPet(player, pet);
 }

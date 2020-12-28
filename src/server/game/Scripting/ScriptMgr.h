@@ -1133,6 +1133,8 @@ class TC_GAME_API ScriptMgr
         void ModifyMeleeDamage(Unit* target, Unit* attacker, uint32& damage);
         void ModifySpellDamageTaken(Unit* target, Unit* attacker, int32& damage);
         void ModifyVehiclePassengerExitPos(Unit* passenger, Vehicle* vehicle, Position& pos);
+        void SummonPet(Player* player, Unit* pet);
+        void UnsummonPet(Player* player, Unit* pet);
         uint32 DealDamage(Unit* AttackerUnit, Unit *pVictim, uint32 damage, DamageEffectType damagetype);
         void ModHeal(Unit* healer, Unit* reciever, uint32& gain);
 
