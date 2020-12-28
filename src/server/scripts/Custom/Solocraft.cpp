@@ -128,8 +128,7 @@ namespace {
             {
                 Map *map = player->GetMap();
                 int difficulty = CalculateDifficulty(map, player);
-                int numInGroup = GetNumInGroup(player);
-                ApplyBuffs(pet, map, difficulty, numInGroup);
+                ApplyBuffs(pet, map, difficulty);
             }
         }
 
@@ -172,7 +171,7 @@ namespace {
             return numInGroup;
         }
 
-        void ApplyBuffs(Unit *pet, Map *map, int difficulty, int numInGroup) {
+        void ApplyBuffs(Unit *pet, Map *map, int difficulty) {
             if (!_justLoggedIn) {
                 ClearBuffs(pet, map);
             }
@@ -185,6 +184,9 @@ namespace {
                     pet->HandleStatFlatModifier(UnitMods(UNIT_MOD_STAT_START + i), TOTAL_VALUE, float(difficulty * 100), true);
                 }
                 pet->SetFullHealth();
+                if (pet->GetPowerType() == POWER_MANA) {
+                    pet->SetPower(POWER_MANA, pet->GetMaxPower(POWER_MANA));
+                }
             }
         }
 
