@@ -434,6 +434,8 @@ class TC_GAME_API UnitScript : public ScriptObject
         //Solocraft
         virtual void SummonPet(Player* /*player*/, Unit* /*pet*/) { }
         virtual void UnsummonPet(Player* /*player*/, Unit* /*pet*/) { }
+        virtual void EnterVehicle(Vehicle* /*veh*/, Unit* /*passenger*/) { }
+        virtual void ExitVehicle(Vehicle* /*veh*/, Unit* /*passenger*/) { }
 
         //VAS AutoBalance
         virtual void ModHeal(Unit* /*healer*/, Unit* /*reciever*/, uint32& /*gain*/) { }
@@ -1134,6 +1136,8 @@ class TC_GAME_API ScriptMgr
         void ModifyVehiclePassengerExitPos(Unit* passenger, Vehicle* vehicle, Position& pos);
         void SummonPet(Player* player, Unit* pet);
         void UnsummonPet(Player* player, Unit* pet);
+        void EnterVehicle(Vehicle* veh, Unit* passenger) { }
+        void ExitVehicle(Vehicle* veh, Unit* passenger) { }
         void ModHeal(Unit* healer, Unit* reciever, uint32& gain);
 
     private:

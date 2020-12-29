@@ -12595,6 +12595,7 @@ void Unit::_EnterVehicle(Vehicle* vehicle, int8 seatId, AuraApplication const* a
         SetControlled(true, UNIT_STATE_ROOT);
 
     ASSERT(!m_vehicle);
+    sScriptMgr->EnterVehicle(m_vehicle, this);
     (void)vehicle->AddPassenger(this, seatId);
 }
 
@@ -12663,6 +12664,7 @@ void Unit::_ExitVehicle(Position const* exitPosition)
 
     Player* player = ToPlayer();
 
+    sScriptMgr->ExitVehicle(vehicle, this);
     // If the player is on mounted duel and exits the mount, he should immediatly lose the duel
     if (player && player->duel && player->duel->IsMounted)
         player->DuelComplete(DUEL_FLED);

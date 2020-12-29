@@ -1844,6 +1844,16 @@ void ScriptMgr::UnsummonPet(Player* player, Unit* pet)
     FOREACH_SCRIPT(UnitScript)->UnsummonPet(player, pet);
 }
 
+void ScriptMgr::EnterVehicle(Vehicle* veh, Unit* passenger) 
+{ 
+    FOREACH_SCRIPT(UnitScript)->EnterVehicle(veh, passenger);
+}
+
+void ScriptMgr::ExitVehicle(Vehicle* veh, Unit* passenger) 
+{ 
+    FOREACH_SCRIPT(UnitScript)->ExitVehicle(veh, passenger);
+}
+
 //Called From Unit::DealHeal
 void ScriptMgr::ModHeal(Unit* healer, Unit* reciever, uint32& gain)
 {

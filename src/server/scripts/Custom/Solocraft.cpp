@@ -205,7 +205,7 @@ namespace {
             TC_LOG_INFO("scripts.solocraft.vehicle.instance", "[Solocraft] solocraft_vehicle_instance_handler Loaded");
         }
 
-        void OnAddPassenger(Vehicle *veh, Unit *passenger, int8 /*seatId*/) override {
+        void EnterVehicle(Vehicle *veh, Unit *passenger) override {
             if (sConfigMgr->GetBoolDefault("Solocraft.Enable", true) && veh && passenger)
             {
                 Map *map = passenger->GetMap();
@@ -214,7 +214,7 @@ namespace {
             }
         }
 
-        void OnRemovePassenger(Vehicle *veh, Unit* /*passenger*/) {
+        void ExitVehicle(Vehicle *veh, Unit* /*passenger*/) {
             if (sConfigMgr->GetBoolDefault("Solocraft.Enable", true) && veh) {
                 ClearBuffs(veh->GetBase());
             }
