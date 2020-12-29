@@ -10,6 +10,7 @@
 #include "Log.h"
 #include "Chat.h"
 #include "InstanceScript.h"
+#include "Vehicle.h"
 
 /*
 * TODO:
@@ -138,7 +139,7 @@ namespace {
             }
         }
     private:
-        std::map<ObjectGuid, int> _unitDifficulty;
+        std::map<ObjectGuid, int> _petDifficulty;
 
         int CalculateDifficulty(Map *map, Player* /*player*/) {
             int difficulty = 1;
@@ -174,7 +175,7 @@ namespace {
                 //InstanceMap *instanceMap = map->ToInstanceMap();
                 //InstanceScript *instanceScript = instanceMap->GetInstanceScript();
 
-                _unitDifficulty[pet->GetGUID()] = difficulty;
+                _petDifficulty[pet->GetGUID()] = difficulty;
                 for (int32 i = STAT_STRENGTH; i < MAX_STATS; ++i) {
                     pet->HandleStatFlatModifier(UnitMods(UNIT_MOD_STAT_START + i), TOTAL_VALUE, float(difficulty * 100), true);
                 }
@@ -186,13 +187,98 @@ namespace {
         }
 
         void ClearBuffs(Unit *pet) {
-            std::map<ObjectGuid, int>::iterator unitDifficultyIterator = _unitDifficulty.find(pet->GetGUID());
-            if (unitDifficultyIterator != _unitDifficulty.end()) {
-                int difficulty = unitDifficultyIterator->second;
-                _unitDifficulty.erase(unitDifficultyIterator);
+            std::map<ObjectGuid, int>::iterator petDifficultyIterator = _petDifficulty.find(pet->GetGUID());
+            if (petDifficultyIterator != _petDifficulty.end()) {
+                int difficulty = petDifficultyIterator->second;
+                _petDifficulty.erase(petDifficultyIterator);
 
                 for (int32 i = STAT_STRENGTH; i < MAX_STATS; ++i) {
                     pet->HandleStatFlatModifier(UnitMods(UNIT_MOD_STAT_START + i), TOTAL_VALUE, float(difficulty * 100), false);
+                }
+            }
+        }
+    };
+
+    class solocraft_vehicle_instance_handler : public VehicleScript {
+    public:
+        solocraft_vehicle_instance_handler() : VehicleScript("solocraft_vehicle_instance_handler") {
+            TC_LOG_INFO("scripts.solocraft.vehicle.instance", "[Solocraft] solocraft_vehicle_instance_handler Loaded");
+        }
+
+        void OnAddPassenger(Vehicle *veh, Unit *passenger, int8 /*seatId*/) override {
+            if (sConfigMgr->GetBoolDefault("Solocraft.Enable", true) && veh && passenger)
+            {
+                Map *map = passenger->GetMap();
+                int difficulty = CalculateDifficulty(map);
+                ApplyBuffs(veh->GetBase(), difficulty);
+            }
+        }
+
+        void OnRemovePassenger(Vehicle *veh, Unit* /*passenger*/) {
+            if (sConfigMgr->GetBoolDefault("Solocraft.Enable", true) && veh) {
+                ClearBuffs(veh->GetBase());
+            }
+        }
+    private:
+        std::map<ObjectGuid, int> _vehicleDifficulty;
+
+        int CalculateDifficulty(Map *map) {
+            int difficulty = 1;
+            if (map) {
+                if (map->Is25ManRaid()) {
+                    difficulty = 25;
+                }
+                else if (map->IsHeroic()) {
+                    difficulty = 10;
+                }
+                else if (map->IsRaid()) {
+                    difficulty = 40;
+                }
+                else if (map->IsDungeon()) {
+                    difficulty = 5;
+                }
+            }
+            return difficulty;
+        }
+
+        int GetNumInGroup(Unit *passenger) {
+            int numInGroup = 1;
+            Player* player = passenger->ToPlayer();
+            if (player)
+            {
+                Group *group = player->GetGroup();
+                if (group) {
+                    Group::MemberSlotList const& groupMembers = group->GetMemberSlots();
+                    numInGroup = groupMembers.size();
+                }
+            }
+            return numInGroup;
+        }
+
+        void ApplyBuffs(Unit *veh, int difficulty) {
+            if (difficulty > 1) {
+                //InstanceMap *instanceMap = map->ToInstanceMap();
+                //InstanceScript *instanceScript = instanceMap->GetInstanceScript();
+
+                _vehicleDifficulty[veh->GetGUID()] = difficulty;
+                for (int32 i = STAT_STRENGTH; i < MAX_STATS; ++i) {
+                    veh->HandleStatFlatModifier(UnitMods(UNIT_MOD_STAT_START + i), TOTAL_VALUE, float(difficulty * 100), true);
+                }
+                veh->SetFullHealth();
+                if (veh->GetPowerType() == POWER_MANA) {
+                    veh->SetPower(POWER_MANA, veh->GetMaxPower(POWER_MANA));
+                }
+            }
+        }
+
+        void ClearBuffs(Unit *veh) {
+            std::map<ObjectGuid, int>::iterator vehicleDifficultyIterator = _vehicleDifficulty.find(veh->GetGUID());
+            if (vehicleDifficultyIterator != _vehicleDifficulty.end()) {
+                int difficulty = vehicleDifficultyIterator->second;
+                _vehicleDifficulty.erase(vehicleDifficultyIterator);
+
+                for (int32 i = STAT_STRENGTH; i < MAX_STATS; ++i) {
+                    veh->HandleStatFlatModifier(UnitMods(UNIT_MOD_STAT_START + i), TOTAL_VALUE, float(difficulty * 100), false);
                 }
             }
         }
@@ -204,4 +290,5 @@ namespace {
 void AddSC_solocraft() {
     new solocraft_player_instance_handler();
     new solocraft_pet_instance_handler();
+    new solocraft_vehicle_instance_handler();
 }
