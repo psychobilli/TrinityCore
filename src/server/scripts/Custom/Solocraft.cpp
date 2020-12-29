@@ -132,9 +132,8 @@ namespace {
             }
         }
 
-        void UnsummonPet(Player *player, Unit *pet) {
+        void UnsummonPet(Player* /*player*/, Unit *pet) {
             if (sConfigMgr->GetBoolDefault("Solocraft.Enable", true)) {
-                Map *map = player->GetMap();
                 ClearBuffs(pet);
             }
         }
