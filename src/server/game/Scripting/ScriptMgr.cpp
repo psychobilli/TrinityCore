@@ -1844,11 +1844,13 @@ void ScriptMgr::UnsummonPet(Player* player, Unit* pet)
     FOREACH_SCRIPT(UnitScript)->UnsummonPet(player, pet);
 }
 
+// Called from Unit::_EnterVehicle
 void ScriptMgr::EnterVehicle(Vehicle* veh, Unit* passenger) 
 { 
     FOREACH_SCRIPT(UnitScript)->EnterVehicle(veh, passenger);
 }
 
+// Called from Unit::_ExitVehicle
 void ScriptMgr::ExitVehicle(Vehicle* veh, Unit* passenger) 
 { 
     FOREACH_SCRIPT(UnitScript)->ExitVehicle(veh, passenger);
