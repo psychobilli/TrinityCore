@@ -230,17 +230,6 @@ public:
     {
     }
 
-    uint32 DealDamage(Unit* AttackerUnit, Unit *playerVictim, uint32 damage, DamageEffectType /*damagetype*/)
-    {
-        if ((AttackerUnit->GetMap()->IsDungeon() && playerVictim->GetMap()->IsDungeon()) || sConfigMgr->GetIntDefault("VASAutoBalance.DungeonsOnly", 1) < 1)
-            if (AttackerUnit->GetTypeId() != TYPEID_PLAYER)
-            {
-                uint32 maxDamageThreshold = playerVictim->GetMaxHealth() * MaxDamagePct;
-                damage = VAS_Modifer_DealDamage(AttackerUnit, damage, maxDamageThreshold);
-            }
-        return damage;
-    }
-
     void OnDamage(Unit* attacker, Unit* victim, uint32& damage) {
         if (attacker && victim)
         {
