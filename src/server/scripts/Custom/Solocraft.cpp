@@ -139,23 +139,23 @@ namespace {
             }
         }
 
-        void EnterVehicle(Vehicle *veh, Unit *passenger) override {
-            if (sConfigMgr->GetBoolDefault("Solocraft.Enable", true) && veh && passenger)
-            {
-                if (Player* player = passenger->ToPlayer()) 
-                {
-                    Map *map = player->GetMap();
-                    int difficulty = CalculateDifficulty(map, player);
-                    ApplyBuffs(veh->GetBase(), difficulty);
-                }
-            }
-        }
+        // void EnterVehicle(Vehicle *veh, Unit *passenger) override {
+        //     if (sConfigMgr->GetBoolDefault("Solocraft.Enable", true) && veh && passenger)
+        //     {
+        //         if (Player* player = passenger->ToPlayer()) 
+        //         {
+        //             Map *map = player->GetMap();
+        //             int difficulty = CalculateDifficulty(map, player);
+        //             ApplyBuffs(veh->GetBase(), difficulty);
+        //         }
+        //     }
+        // }
 
-        void ExitVehicle(Vehicle *veh, Unit* /*passenger*/) {
-            if (sConfigMgr->GetBoolDefault("Solocraft.Enable", true) && veh) {
-                ClearBuffs(veh->GetBase());
-            }
-        }
+        // void ExitVehicle(Vehicle *veh, Unit* /*passenger*/) {
+        //     if (sConfigMgr->GetBoolDefault("Solocraft.Enable", true) && veh) {
+        //         ClearBuffs(veh->GetBase());
+        //     }
+        // }
         
     private:
         std::map<ObjectGuid, int> _petDifficulty;
