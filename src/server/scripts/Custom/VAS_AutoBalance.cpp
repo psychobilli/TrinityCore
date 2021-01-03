@@ -425,6 +425,8 @@ public:
                    // TC_LOG_DEBUG("creature.log", "VAS_Autobalance: CreatureId %u, name %s, has map %s and playerCount %u.", creature->GetEntry(), creature->GetName(), map->GetMapName(), map->GetPlayersCountExceptGMs());
                // }
            // }
+            if (creature->isDead() && CreatureInfo[creature->GetGUID()].creatureId)
+                CreatureInfo.erase(creature->GetGUID());
             if (DoCreatureUpdate(creature, map, log))
             {
                 if (log) {
@@ -603,6 +605,7 @@ public:
         {
             { "setoffset",        HandleVasSetOffsetCommand,                 rbac::RBAC_ROLE_GAMEMASTER,                        Console::Yes },
             { "getoffset",        HandleVasGetOffsetCommand,                 rbac::RBAC_ROLE_GAMEMASTER,                        Console::Yes },
+            { "clear",        HandleVasClearCommand,                 rbac::RBAC_ROLE_GAMEMASTER,                        Console::Yes },
         };
 
         static ChatCommandTable commandTable =
@@ -637,6 +640,12 @@ public:
     static bool HandleVasGetOffsetCommand(ChatHandler* handler, char /*args*/)
     {
         handler->PSendSysMessage("Current Player Difficulty Offset = %i", PlayerCountDifficultyOffset);
+        return true;
+    }
+    static bool HandleVasClearCommand(ChatHandler* handler, char /*args*/)
+    {
+        handler->PSendSysMessage("Clearing all creature info.");
+        CreatureInfo.clear();
         return true;
     }
 };
