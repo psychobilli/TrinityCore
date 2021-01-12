@@ -98,9 +98,9 @@ INSERT INTO `creature_template_addon` (`entry`,`mount`,`bytes1`,`bytes2`,`emote`
 
 -- You should not be able to mount a vehicle if you don't have Argent Lance equipped
 DELETE FROM `conditions` WHERE `SourceTypeOrReferenceId`=16 AND `SourceGroup`=0 AND `SourceEntry` IN (@ARGENT_BATTLEWORG,@ARGENT_WARHORSE);
-INSERT INTO `conditions` (`SourceTypeOrReferenceId`,`SourceGroup`,`SourceEntry`,`SourceId`,`ElseGroup`,`ConditionTypeOrReference`,`ConditionTarget`,`ConditionValue1`,`ConditionValue2`,`ConditionValue3`,`ScriptName`,`Comment`) VALUES
-(16,0,@ARGENT_BATTLEWORG,0,0,3,0,46106,0,0,'','Argent Lance must be equipped in order to mount a vehicle'),
-(16,0,@ARGENT_WARHORSE,0,0,3,0,46106,0,0,'','Argent Lance must be equipped in order to mount a vehicle');
+INSERT INTO `conditions` (`SourceTypeOrReferenceId`,`SourceGroup`,`SourceEntry`,`SourceId`,`ElseGroup`,`ConditionTypeOrReference`,`ConditionTarget`,`ConditionValue1`,`ConditionValue2`,`ConditionValue3`,`Comment`) VALUES
+(16,0,@ARGENT_BATTLEWORG,0,0,3,0,46106,0,0,'Argent Lance must be equipped in order to mount a vehicle'),
+(16,0,@ARGENT_WARHORSE,0,0,3,0,46106,0,0,'Argent Lance must be equipped in order to mount a vehicle');
 
 -- Heralds:
 
@@ -259,27 +259,27 @@ INSERT INTO `achievement_criteria_data` (`criteria_id`,`type`,`ScriptName`) VALU
 
 -- These criterias are missing creature checks
 DELETE FROM `achievement_criteria_data` WHERE `type`=1 AND `criteria_id` IN (@CRITERIA_JACOB,@CRITERIA_LANA,@CRITERIA_COLOSOS,@CRITERIA_AMBROSE,@CRITERIA_JAELYNE,@CRITERIA_MOKRA,@CRITERIA_VISCERI,@CRITERIA_RUNOK,@CRITERIA_ERESSEA,@CRITERIA_ZULTORE,@CRITERIA_JACOB_H,@CRITERIA_LANA_H,@CRITERIA_COLOSOS_H,@CRITERIA_AMBROSE_H,@CRITERIA_JAELYNE_H,@CRITERIA_MOKRA_H,@CRITERIA_VISCERI_H,@CRITERIA_RUNOK_H,@CRITERIA_ERESSEA_H,@CRITERIA_ZULTORE_H);
-INSERT INTO `achievement_criteria_data` (`criteria_id`,`type`,`value1`,`ScriptName`) VALUES
-(@CRITERIA_JACOB,     1, @JACOB, ''),
-(@CRITERIA_LANA,      1, @LANA, ''),
-(@CRITERIA_COLOSOS,   1, @COLOSOS, ''),
-(@CRITERIA_AMBROSE,   1, @AMBROSE, ''),
-(@CRITERIA_JAELYNE,   1, @JAELYNE, ''),
-(@CRITERIA_MOKRA,     1, @MOKRA, ''),
-(@CRITERIA_VISCERI,   1, @VISCERI, ''),
-(@CRITERIA_RUNOK,     1, @RUNOK, ''),
-(@CRITERIA_ERESSEA,   1, @ERESSEA, ''),
-(@CRITERIA_ZULTORE,   1, @ZULTORE, ''),
-(@CRITERIA_JACOB_H,   1, @JACOB, ''),
-(@CRITERIA_LANA_H,    1, @LANA, ''),
-(@CRITERIA_COLOSOS_H, 1, @COLOSOS, ''),
-(@CRITERIA_AMBROSE_H, 1, @AMBROSE, ''),
-(@CRITERIA_JAELYNE_H, 1, @JAELYNE, ''),
-(@CRITERIA_MOKRA_H,   1, @MOKRA, ''),
-(@CRITERIA_VISCERI_H, 1, @VISCERI, ''),
-(@CRITERIA_RUNOK_H,   1, @RUNOK, ''),
-(@CRITERIA_ERESSEA_H, 1, @ERESSEA, ''),
-(@CRITERIA_ZULTORE_H, 1, @ZULTORE, '');
+INSERT INTO `achievement_criteria_data` (`criteria_id`,`type`,`value1`) VALUES
+(@CRITERIA_JACOB,     1, @JACOB),
+(@CRITERIA_LANA,      1, @LANA),
+(@CRITERIA_COLOSOS,   1, @COLOSOS),
+(@CRITERIA_AMBROSE,   1, @AMBROSE),
+(@CRITERIA_JAELYNE,   1, @JAELYNE),
+(@CRITERIA_MOKRA,     1, @MOKRA),
+(@CRITERIA_VISCERI,   1, @VISCERI),
+(@CRITERIA_RUNOK,     1, @RUNOK),
+(@CRITERIA_ERESSEA,   1, @ERESSEA),
+(@CRITERIA_ZULTORE,   1, @ZULTORE),
+(@CRITERIA_JACOB_H,   1, @JACOB),
+(@CRITERIA_LANA_H,    1, @LANA),
+(@CRITERIA_COLOSOS_H, 1, @COLOSOS),
+(@CRITERIA_AMBROSE_H, 1, @AMBROSE),
+(@CRITERIA_JAELYNE_H, 1, @JAELYNE),
+(@CRITERIA_MOKRA_H,   1, @MOKRA),
+(@CRITERIA_VISCERI_H, 1, @VISCERI),
+(@CRITERIA_RUNOK_H,   1, @RUNOK),
+(@CRITERIA_ERESSEA_H, 1, @ERESSEA),
+(@CRITERIA_ZULTORE_H, 1, @ZULTORE);
 
 -- Statistics achievements are also missing creature checks, but as criterias are same on both horde and alliance,
 -- and we can only check for one creature entry, we must use core script to check for two entries
@@ -457,19 +457,12 @@ INSERT INTO `conditions` (`SourceTypeOrReferenceId`,`SourceGroup`,`SourceEntry`,
 (13, 7, 67751, 0, 0,  1, 0, 67751, 0, 0, 1, 0, 0, '', "Ghoul Explode (The Black Knight)");
 
 -- Gossip Menu GM options added to DB, the regular ones were already there... Please review....
-DELETE FROM `gossip_menu_option` WHERE `MenuID`=@GOSSIP_MENU AND `OptionIndex` IN (4, 5, 6, 7, 8);
-INSERT INTO `gossip_menu_option` (`MenuID`, `OptionIndex`, `OptionIcon`, `OptionText`, `OptionBroadcastTextID`, `OptionType`, `OptionNpcFlag`) VALUES
-(@GOSSIP_MENU, 4, 0, '[GM] Start Grand Champions encounter, unskipped roleplaying', 0, 1, 1),
-(@GOSSIP_MENU, 5, 0, '[GM] Start Grand Champions encounter, skipped roleplaying', 0, 1, 1),
-(@GOSSIP_MENU, 6, 0, '[GM] Start Eadric the Pure encounter', 0, 1, 1),
-(@GOSSIP_MENU, 7, 0, '[GM] Start Argent Confessor Paletress encounter', 0, 1, 1),
-(@GOSSIP_MENU, 8, 0, '[GM] Start The Black Knight encounter', 0, 1, 1);
-DELETE FROM `gossip_menu_option_action` WHERE `MenuID`=@GOSSIP_MENU AND `OptionIndex` IN (4, 5, 6, 7, 8);
-INSERT INTO `gossip_menu_option_action` (`MenuId`,`OptionIndex`,`ActionMenuId`,`ActionPoiId`) VALUES
-(@GOSSIP_MENU, 4, 0, 0),
-(@GOSSIP_MENU, 5, 0, 0),
-(@GOSSIP_MENU, 6, 0, 0),
-(@GOSSIP_MENU, 7, 0, 0),
-(@GOSSIP_MENU, 8, 0, 0);
+DELETE FROM `gossip_menu_option` WHERE `MenuID`=@GOSSIP_MENU AND `OptionID` IN (4, 5, 6, 7, 8);
+INSERT INTO `gossip_menu_option` (`MenuID`, `OptionID`, `OptionIcon`, `OptionText`, `OptionBroadcastTextID`, `OptionType`, `OptionNpcFlag`, `ActionMenuID`, `ActionPoiID`, `BoxCoded`, `BoxMoney`, `BoxText`, `BoxBroadcastTextID`, `VerifiedBuild`) VALUES
+(@GOSSIP_MENU, 4, 0, '[GM] Start Grand Champions encounter, unskipped roleplaying', 0, 1, 1, 0, 0, 0, 0, '', 0, 0),
+(@GOSSIP_MENU, 5, 0, '[GM] Start Grand Champions encounter, skipped roleplaying', 0, 1, 1, 0, 0, 0, 0, '', 0, 0),
+(@GOSSIP_MENU, 6, 0, '[GM] Start Eadric the Pure encounter', 0, 1, 1, 0, 0, 0, 0, '', 0, 0),
+(@GOSSIP_MENU, 7, 0, '[GM] Start Argent Confessor Paletress encounter', 0, 1, 1, 0, 0, 0, 0, '', 0, 0),
+(@GOSSIP_MENU, 8, 0, '[GM] Start The Black Knight encounter', 0, 1, 1, 0, 0, 0, 0, '', 0, 0);
 -- Death knight mount speed fixed.
 UPDATE `creature_template` SET `speed_run` = '11.71429', `speed_walk` = 10 WHERE `creature_template`.`entry` = 35491;
