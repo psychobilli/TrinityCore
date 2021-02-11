@@ -60,6 +60,7 @@ static std::map<int, int> fullDamageCreatureIds;
 static std::map<int, int> logCreatureIds;                      // Used to log updates to selected creatures for debugging purposes.
 static int8 PlayerCountDifficultyOffset; //cheaphack for difficulty server-wide. Another value TODO in player class for the party leader's value to determine dungeon difficulty.
 static float MaxDamagePct;               // Minimize total damage allowed by a pct of the player's health.
+static int8 lockPlayerCount;            // Sets the maximum player count for scaling.
 int GetValidDebugLevel()
 {
     int debugLevel = sConfigMgr->GetIntDefault("VASAutoBalance.DebugLevel", 2);
@@ -84,6 +85,10 @@ void LoadMaxHealthPctForDamage()
         MaxDamagePct = 10;
     }
     MaxDamagePct = MaxDamagePct * .01;
+}
+
+void LoadLockPlayerCount() {
+    lockPlayerCount = sConfigMgr->GetIntDefault("VASAutoBalance.LockPlayerCount", 0);
 }
 
 void LoadForcedCreatureIdsFromString(std::string creatureIds, int forcedPlayerCount) // Used for reading the string from the configuration file to for those creatures who need to be scaled for XX number of players.
@@ -235,6 +240,7 @@ public:
         logCreatureIds.clear();
         LoadLogCreatureIdsFromString(sConfigMgr->GetStringDefault("VASAutoBalance.LogCreature", ""));
         LoadMaxHealthPctForDamage();
+        LoadLockPlayerCount();
 
         PlayerCountDifficultyOffset = 0;
     }
@@ -357,9 +363,9 @@ public:
 
     void OnPlayerEnterAll(Map* map, Player* player)
     {
-        int instancePlayerCount = 0;
-        if (map->GetPlayersCountExceptGMs() > 0) {
-            instancePlayerCount = 1;
+        int instancePlayerCount = map->GetPlayersCountExceptGMs() - 1;
+        if (lockPlayerCount > 0 && lockPlayerCount < instancePlayerCount) {
+            instancePlayerCount = lockPlayerCount;
         }
 
         if (sConfigMgr->GetIntDefault("VASAutoBalance.PlayerChangeNotify", 1) > 0)
@@ -384,9 +390,9 @@ public:
 
     void OnPlayerLeaveAll(Map* map, Player* player)
     {
-        int instancePlayerCount = 0;
-        if (map->GetPlayersCountExceptGMs() > 0) {
-            instancePlayerCount = 1;
+        int instancePlayerCount = map->GetPlayersCountExceptGMs() - 1;
+        if (lockPlayerCount > 0 && lockPlayerCount < instancePlayerCount) {
+            instancePlayerCount = lockPlayerCount;
         }
 
         if (instancePlayerCount >= 1)
@@ -428,9 +434,9 @@ public:
 
         if (creature->GetMap()->IsDungeon() || sConfigMgr->GetIntDefault("VASAutoBalance.DungeonsOnly", 1) < 1)
         {
-            int instancePlayerCount = 0;
-            if (creature->GetMap()->GetPlayersCountExceptGMs() > 0) {
-                instancePlayerCount = 1;
+            int instancePlayerCount = creature->GetMap()->GetPlayersCountExceptGMs();
+            if (lockPlayerCount > 0 && lockPlayerCount < instancePlayerCount) {
+                instancePlayerCount = lockPlayerCount;
             }
 
             ModifyCreatureAttributes(creature);
@@ -521,9 +527,9 @@ public:
 
         uint32 baseHealth = creatureStats->GenerateHealth(creatureTemplate);
         uint32 baseMana = creatureStats->GenerateMana(creatureTemplate);
-        int instancePlayerCount = 0;
-        if (creature->GetMap()->GetPlayersCountExceptGMs() > 0) {
-            instancePlayerCount = 1;
+        int instancePlayerCount = creature->GetMap()->GetPlayersCountExceptGMs();
+        if (lockPlayerCount > 0 && lockPlayerCount < instancePlayerCount) {
+            instancePlayerCount = lockPlayerCount;
         }
         uint32 maxNumberOfPlayers = ((InstanceMap*)sMapMgr->FindMap(creature->GetMapId(), creature->GetInstanceId()))->GetMaxPlayers();
         uint32 scaledHealth = 0;

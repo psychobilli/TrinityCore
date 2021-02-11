@@ -4154,6 +4154,12 @@ VASAutoBalance.MinDamageModifier = 0.100000
 VASAutoBalance.MaxHealthPctForDamage = 15
 
 #
+#     VASAutoBalance.LockPlayerCount
+#        Locks the scaling from 0 to a maximum player count.  0 disables the feature.
+
+VASAutoBalance.LockPlayerCount = 0
+
+#
 #     VASAutoBalance.ForcedIdXX
 #        Sets MobIDs for the group they belong to.
 #        All 5 Man Mobs should go in VASAutoBalance.ForcedID5
