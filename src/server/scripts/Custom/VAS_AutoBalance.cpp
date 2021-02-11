@@ -31,6 +31,7 @@
 #include "Unit.h"
 #include "Chat.h"
 #include "Creature.h"
+#include "GameObject.h"
 #include "Player.h"
 #include "ObjectMgr.h"
 #include "MapManager.h"
@@ -55,6 +56,7 @@ struct AutoBalanceCreatureInfo
 static std::map<uint32, AutoBalanceCreatureInfo> CreatureInfo; // A hook should be added to remove the mapped entry when the creature is dead or this should be added into the creature object
 static std::map<int, int> forcedCreatureIds;                   // The map values correspond with the VAS.AutoBalance.XX.Name entries in the configuration file.
 static std::map<int, int> blockedCreatureIds;
+static std::map<int, int> fullDamageCreatureIds;
 static std::map<int, int> logCreatureIds;                      // Used to log updates to selected creatures for debugging purposes.
 static int8 PlayerCountDifficultyOffset; //cheaphack for difficulty server-wide. Another value TODO in player class for the party leader's value to determine dungeon difficulty.
 static float MaxDamagePct;               // Minimize total damage allowed by a pct of the player's health.
@@ -115,6 +117,21 @@ void LoadBlockedCreatureIdsFromString(std::string creatureIds, int forcedPlayerC
         }
     }
 }
+void LoadFullDamageCreatureIdsFromString(std::string creatureIds, int forcedPlayerCount)
+{
+    std::string delimitedValue;
+    std::stringstream creatureIdsStream;
+
+    creatureIdsStream.str(creatureIds);
+    while (std::getline(creatureIdsStream, delimitedValue, ',')) // Process each GObject ID in the string, delimited by the comma - ","
+    {
+        int gameObjectId = atoi(delimitedValue.c_str());
+        if (gameObjectId >= 0)
+        {
+            fullDamageCreatureIds[gameObjectId] = forcedPlayerCount;
+        }
+    }
+}
 void LoadLogCreatureIdsFromString(std::string creatureIds)
 {
     std::string delimitedValue;
@@ -142,6 +159,14 @@ int GetForcedCreatureId(int creatureId)
 bool IsBlockedCreatureId(int creatureId)
 {
     if (blockedCreatureIds.find(creatureId) == blockedCreatureIds.end()) // Don't want the blockedCreatureIds map to blowup to a massive empty array
+    {
+        return false;
+    }
+    return true;
+}
+bool IsFullDamageCreatureId(int creatureId)
+{
+    if (fullDamageCreatureIds.find(creatureId) == fullDamageCreatureIds.end()) // Don't want the blockedGameObjectIds map to blowup to a massive empty array
     {
         return false;
     }
@@ -200,6 +225,13 @@ public:
         LoadBlockedCreatureIdsFromString(sConfigMgr->GetStringDefault("VASAutoBalance.BlockedID10", ""), 10);
         LoadBlockedCreatureIdsFromString(sConfigMgr->GetStringDefault("VASAutoBalance.BlockedID5", ""), 5);
         LoadBlockedCreatureIdsFromString(sConfigMgr->GetStringDefault("VASAutoBalance.BlockedID2", ""), 2);
+        fullDamageCreatureIds.clear();
+        LoadFullDamageCreatureIdsFromString(sConfigMgr->GetStringDefault("VASAutoBalance.FullDamageCreature40", ""), 40);
+        LoadFullDamageCreatureIdsFromString(sConfigMgr->GetStringDefault("VASAutoBalance.FullDamageCreature25", ""), 25);
+        LoadFullDamageCreatureIdsFromString(sConfigMgr->GetStringDefault("VASAutoBalance.FullDamageCreature20", ""), 20);
+        LoadFullDamageCreatureIdsFromString(sConfigMgr->GetStringDefault("VASAutoBalance.FullDamageCreature10", ""), 10);
+        LoadFullDamageCreatureIdsFromString(sConfigMgr->GetStringDefault("VASAutoBalance.FullDamageCreature5", ""), 5);
+        LoadFullDamageCreatureIdsFromString(sConfigMgr->GetStringDefault("VASAutoBalance.FullDamageCreature2", ""), 2);
         logCreatureIds.clear();
         LoadLogCreatureIdsFromString(sConfigMgr->GetStringDefault("VASAutoBalance.LogCreature", ""));
         LoadMaxHealthPctForDamage();
@@ -291,7 +323,7 @@ public:
         if ((sConfigMgr->GetIntDefault("VASAutoBalance.DungeonsOnly", 1) < 1 || (damageInfo->Attacker->GetMap()->IsDungeon() && damageInfo->Target->GetMap()->IsDungeon()) || (damageInfo->Attacker->GetMap()->IsBattleground() && damageInfo->Target->GetMap()->IsBattleground())) && (damageInfo->Attacker->GetTypeId() != TYPEID_PLAYER))
             if (!((damageInfo->Attacker->IsHunterPet() || damageInfo->Attacker->IsPet() || damageInfo->Attacker->IsSummon()) && damageInfo->Attacker->IsControlledByPlayer())) // Make sure that the attacker Is not a Pet of some sort
             {
-                damageInfo->Damages[2].Damage = (float)damageInfo->Damages[2].Damage * (float)CreatureInfo[damageInfo->Attacker->GetGUID()].DamageMultiplier;
+                damageInfo->Damages[1].Damage = (float)damageInfo->Damages[1].Damage * (float)CreatureInfo[damageInfo->Attacker->GetGUID()].DamageMultiplier;
             }
         return;
     }
@@ -299,6 +331,8 @@ public:
     uint32 VAS_Modifer_DealDamage(Unit* AttackerUnit, uint32 damage, uint32 maxDamageThreshold)
     {
         if ((AttackerUnit->IsHunterPet() || AttackerUnit->IsPet() || AttackerUnit->IsSummon()) && AttackerUnit->IsControlledByPlayer())
+            return damage;
+        if (AttackerUnit->IsCreature() && IsFullDamageCreatureId(AttackerUnit->ToCreature()->GetEntry()))
             return damage;
 
         float damageMultiplier = CreatureInfo[AttackerUnit->GetGUID()].DamageMultiplier;

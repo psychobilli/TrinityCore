@@ -4176,8 +4176,21 @@ VASAutoBalance.BlockedID40 = ""
 VASAutoBalance.BlockedID25 = "34045"
 VASAutoBalance.BlockedID20 = ""
 VASAutoBalance.BlockedID10 = "31366,31210,33060,33062,33109"
-VASAutoBalance.BlockedID5 = "3678,3849,3850,4508,7998,8516,17876,27692,27755,27756,28070,26499,35644,36558"
+VASAutoBalance.BlockedID5 = "3678,3849,3850,4508,7998,8516,17876,27692,27755,27756,28070,26499,35644,36558,19671"
 VASAutoBalance.BlockedID2 = ""
+
+#
+#     VASAutoBalance.FullDamageCreatureIdXX
+#        Blocks GameObjects from having damage modified.
+#        All 5 Man Mobs should go in VASAutoBalance.FullDamageCreatureId5
+#        All 10 Man Mobs should go in VASAutoBalance.FullDamageCreatureId10 etc.
+
+VASAutoBalance.FullDamageCreatureId40 = ""
+VASAutoBalance.FullDamageCreatureId25 = ""
+VASAutoBalance.FullDamageCreatureId20 = ""
+VASAutoBalance.FullDamageCreatureId10 = "19871"
+VASAutoBalance.FullDamageCreatureId5 = "19871"
+VASAutoBalance.FullDamageCreatureId2 = ""
 
 #
 #     VASAutoBalance.LogCreature
