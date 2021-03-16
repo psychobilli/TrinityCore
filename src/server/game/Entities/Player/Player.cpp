@@ -7116,7 +7116,6 @@ void Player::UpdateZone(uint32 newZone, uint32 newArea)
 
     GetMap()->SendZoneDynamicInfo(newZone, this);
 
-
     // in PvP, any not controlled zone (except zone->FactionGroupMask == 6, default case)
     // in PvE, only opposition team capital
     switch (zone->FactionGroupMask)
@@ -18609,7 +18608,6 @@ void Player::_LoadQuestStatus(PreparedQueryResult result)
                     ++slot;
                 }
 
-
                 TC_LOG_DEBUG("entities.player.loading", "Player::_LoadQuestStatus: Quest status is {%u} for quest {%u} for player (%s)", questStatusData.Status, quest_id, GetGUID().ToString().c_str());
             }
         }
@@ -19920,7 +19918,6 @@ void Player::_SaveInventory(CharacterDatabaseTransaction trans)
     }
     m_itemUpdateQueue.clear();
 }
-
 
 void Player::_SaveMail(CharacterDatabaseTransaction trans)
 {
@@ -24982,14 +24979,6 @@ bool Player::CanFlyInZone(uint32 mapid, uint32 zone, SpellInfo const* bySpell) c
     return true;
 }
 
-void Player::LearnSpellHighestRank(uint32 spellid)
-{
-    LearnSpell(spellid, false);
-
-    if (uint32 next = sSpellMgr->GetNextSpellInChain(spellid))
-        LearnSpellHighestRank(next);
-}
-
 void Player::_LoadSkills(PreparedQueryResult result)
 {
     //                                                           0      1      2
@@ -25231,7 +25220,7 @@ void Player::HandleFall(MovementInfo const& movementInfo)
             }
 
             //Z given by moveinfo, LastZ, FallTime, WaterZ, MapZ, Damage, Safefall reduction
-            TC_LOG_DEBUG("entities.player", "FALLDAMAGE z=%f sz=%f pZ=%f FallTime=%d mZ=%f damage=%d SF=%d", movementInfo.pos.GetPositionZ(), height, GetPositionZ(), movementInfo.fallTime, height, damage, safe_fall);
+            TC_LOG_DEBUG("entities.player.falldamage", "FALLDAMAGE z=%f sz=%f pZ=%f FallTime=%d mZ=%f damage=%d SF=%d\nPlayer debug info:\n%s", movementInfo.pos.GetPositionZ(), height, GetPositionZ(), movementInfo.fallTime, height, damage, safe_fall, GetDebugInfo().c_str());
         }
     }
 }
@@ -25988,7 +25977,6 @@ void Player::_SaveGlyphs(CharacterDatabaseTransaction trans) const
     CharacterDatabasePreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_CHAR_GLYPHS);
     stmt->setUInt32(0, GetGUID().GetCounter());
     trans->Append(stmt);
-
 
     for (uint8 spec = 0; spec < m_specsCount; ++spec)
     {
