@@ -2583,7 +2583,6 @@ void SpellMgr::LoadSpellInfoStore()
         }
     }
 
-
     TC_LOG_INFO("server.loading", ">> Loaded SpellInfo store in %u ms", GetMSTimeDiffToNow(oldMSTime));
 }
 
@@ -3525,7 +3524,6 @@ void SpellMgr::LoadSpellInfoCorrections()
         spellInfo->Effects[EFFECT_0].SpellClassMask[0] |= 0x800;
     });
 
-
     // Crafty's Ultra-Advanced Proto-Typical Shortening Blaster
     ApplySpellFix({ 51912 }, [](SpellInfo* spellInfo)
     {
@@ -3834,6 +3832,12 @@ void SpellMgr::LoadSpellInfoCorrections()
     });
 
     ApplySpellFix({
+        6789,  // Warlock - Death Coil (Rank 1)
+        17925, // Warlock - Death Coil (Rank 2)
+        17926, // Warlock - Death Coil (Rank 3)
+        27223, // Warlock - Death Coil (Rank 4)
+        47859, // Warlock - Death Coil (Rank 5)
+        47860, // Warlock - Death Coil (Rank 6)
         71838, // Drain Life - Bryntroll Normal
         71839  // Drain Life - Bryntroll Heroic
     }, [](SpellInfo* spellInfo)
